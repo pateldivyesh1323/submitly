@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "concurrently \"pnpm --filter client dev\" \"pnpm --filter server dev\"",
+    "dev": "concurrently \"pnpm --filter ./packages/client dev\" \"pnpm --filter ./packages/server dev\"",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
