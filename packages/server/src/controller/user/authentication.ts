@@ -24,7 +24,7 @@ const signUpController = async (data: UserType) => {
   const token = user.generateAuthToken();
   return {
     status: 201,
-    message: "User created",
+    message: "Signup successful",
     data: { _id, name: userName, email: userEmail, token },
   };
 };
