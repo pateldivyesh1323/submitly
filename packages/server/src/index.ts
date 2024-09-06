@@ -4,7 +4,11 @@ const app = express();
 const PORT = process.env.PORT || 8000;
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("Hello from the TypeScript Express backend!");
+  res.status(200).json({ message: "Server status good" });
+});
+
+app.all("*", (req: Request, res: Response) => {
+  res.status(404).json({ message: "Route not found" });
 });
 
 app.listen(PORT, () => {
