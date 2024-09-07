@@ -1,16 +1,18 @@
-import { useEffect } from "react";
 import "./App.css";
+import { Box } from "@radix-ui/themes";
+import Navbar from "./components/Navbar";
+import Home from "./pages/Home";
+import { Route, Routes } from "react-router-dom";
 
 function App() {
-  useEffect(() => {
-    fetch("http://localhost:8000/api/user/auth/signup", {
-      method: "POST",
-    })
-      .then((res) => res.json())
-      .then((data) => console.log(data));
-  }, []);
-
-  return <>Submitly</>;
+  return (
+    <Box className="bg-secondary text-textPrimary min-h-screen">
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Home />}></Route>
+      </Routes>
+    </Box>
+  );
 }
 
 export default App;
