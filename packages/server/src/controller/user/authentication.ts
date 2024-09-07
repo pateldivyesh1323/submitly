@@ -29,4 +29,30 @@ const signUpController = async (data: UserType) => {
   };
 };
 
-export { signUpController };
+const loginController = async (data: Omit<UserType, "name">) => {
+  const { email, password } = data;
+
+  if (!email || !password) {
+    throw new BadRequestError("Please provide all the details");
+  }
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new BadRequestError("User not found");
+  }
+
+  const isMatch = await user.matchPassword(password);
+  if (!isMatch) {
+    throw new BadRequestError("Invalid credentials");
+  }
+
+  const { _id, name, email: userEmail } = user;
+  const token = user.generateAuthToken();
+  return {
+    status: 200,
+    message: "Login successful",
+    data: { _id, name, email: userEmail, token },
+  };
+};
+
+export { signUpController, loginController };
