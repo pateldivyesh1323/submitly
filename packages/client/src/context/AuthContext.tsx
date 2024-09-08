@@ -8,8 +8,12 @@ import {
 } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { handleError } from "../lib/error";
-import { signUp } from "../queries/authentication";
-import { AUTH_TOKEN_KEY, SIGN_UP_MUTATION_KEY } from "../lib/constants";
+import { login, signUp } from "../queries/authentication";
+import {
+  AUTH_TOKEN_KEY,
+  LOGIN_MUTATION_KEY,
+  SIGN_UP_MUTATION_KEY,
+} from "../lib/constants";
 import { SignUpDataInterface } from "../types/User";
 import { useNavigate } from "react-router-dom";
 
@@ -22,6 +26,8 @@ interface AuthContextType {
   isSignUpLoading: boolean;
   isAuthLoading: boolean;
   isAuthenticated: boolean;
+  loginMutation: (data: Omit<SignUpDataInterface, "name">) => void;
+  isLoginLoading: boolean;
   logout: () => void;
 }
 
@@ -44,20 +50,32 @@ export const AuthProvider = ({ children }: PropsType) => {
 
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const token = getStoredAccessToken();
 
   useEffect(() => {
-    const token = getStoredAccessToken();
     if (token) {
       setIsAuthenticated(true);
     } else {
       setIsAuthenticated(false);
     }
     setIsAuthLoading(false);
-  }, []);
+  }, [token]);
 
   const { mutate: signUpMutation, isPending: isSignUpLoading } = useMutation({
     mutationKey: [SIGN_UP_MUTATION_KEY],
     mutationFn: signUp,
+    onError: (error) => {
+      handleError(error);
+    },
+    onSuccess(data) {
+      setStoredAccessToken(data.data.token);
+      navigate("/dashboard");
+    },
+  });
+
+  const { mutate: loginMutation, isPending: isLoginLoading } = useMutation({
+    mutationKey: [LOGIN_MUTATION_KEY],
+    mutationFn: login,
     onError: (error) => {
       handleError(error);
     },
@@ -76,6 +94,8 @@ export const AuthProvider = ({ children }: PropsType) => {
   const value: AuthContextType = {
     signUpMutation,
     isSignUpLoading,
+    loginMutation,
+    isLoginLoading,
     isAuthLoading,
     isAuthenticated,
     logout,
