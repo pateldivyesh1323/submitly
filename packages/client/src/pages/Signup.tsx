@@ -21,6 +21,7 @@ export default function Signup() {
               type="text"
               id="name"
               className="bg-white text-black rounded-md h-10 p-1"
+              required
             />
           </Form.Control>
         </Form.Field>
@@ -31,6 +32,7 @@ export default function Signup() {
               type="text"
               id="email"
               className="bg-white text-black rounded-md h-10 p-1"
+              required
             />
           </Form.Control>
         </Form.Field>
@@ -41,6 +43,7 @@ export default function Signup() {
               type="password"
               id="password"
               className="bg-white text-black rounded-md h-10 p-1"
+              required
             />
           </Form.Control>
         </Form.Field>
@@ -51,8 +54,9 @@ export default function Signup() {
           <Form.Control asChild>
             <input
               type="text"
-              id="name"
+              id="confirmPassword"
               className="bg-white text-black rounded-md h-10 p-1"
+              required
             />
           </Form.Control>
         </Form.Field>
