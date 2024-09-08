@@ -1,5 +1,11 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  ReactNode,
+  useEffect,
+  useState,
+} from "react";
 import { useMutation } from "@tanstack/react-query";
 import { handleError } from "../lib/error";
 import { signUp } from "../queries/authentication";
@@ -14,6 +20,9 @@ type PropsType = {
 interface AuthContextType {
   signUpMutation: (data: SignUpDataInterface) => void;
   isSignUpLoading: boolean;
+  isAuthLoading: boolean;
+  isAuthenticated: boolean;
+  logout: () => void;
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -33,6 +42,19 @@ const removeStoredAccessToken = () => {
 export const AuthProvider = ({ children }: PropsType) => {
   const navigate = useNavigate();
 
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const token = getStoredAccessToken();
+    if (token) {
+      setIsAuthenticated(true);
+    } else {
+      setIsAuthenticated(false);
+    }
+    setIsAuthLoading(false);
+  }, []);
+
   const { mutate: signUpMutation, isPending: isSignUpLoading } = useMutation({
     mutationKey: [SIGN_UP_MUTATION_KEY],
     mutationFn: signUp,
@@ -45,7 +67,19 @@ export const AuthProvider = ({ children }: PropsType) => {
     },
   });
 
-  const value: AuthContextType = { signUpMutation, isSignUpLoading };
+  const logout = () => {
+    removeStoredAccessToken();
+    setIsAuthenticated(false);
+    navigate("/");
+  };
+
+  const value: AuthContextType = {
+    signUpMutation,
+    isSignUpLoading,
+    isAuthLoading,
+    isAuthenticated,
+    logout,
+  };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

@@ -1,7 +1,10 @@
 import { Box, Button, Flex, Text } from "@radix-ui/themes";
 import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
+  const { isAuthenticated, logout } = useAuth();
+
   return (
     <Flex
       justify="between"
@@ -16,14 +19,27 @@ export default function Navbar() {
         </Link>
       </Box>
       <Flex className="space-x-4" align="center">
-        <Link to="/signup">
-          <Button className="cursor-pointer">Get started</Button>
-        </Link>
-        <Link to="/login">
-          <Button variant="ghost" className="cursor-pointer">
-            Login
-          </Button>
-        </Link>
+        {!isAuthenticated ? (
+          <>
+            <Link to="/signup">
+              <Button className="cursor-pointer">Get started</Button>
+            </Link>
+            <Link to="/login">
+              <Button variant="ghost" className="cursor-pointer">
+                Login
+              </Button>
+            </Link>
+          </>
+        ) : (
+          <>
+            <Link to="/dashboard">
+              <Button className="cursor-pointer">Dashboard</Button>
+            </Link>
+            <Button onClick={logout} variant="ghost" className="cursor-pointer">
+              Logout
+            </Button>
+          </>
+        )}
       </Flex>
     </Flex>
   );
