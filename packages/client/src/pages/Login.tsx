@@ -10,31 +10,31 @@ export default function Login() {
       justify="center"
       align="center"
       direction="column"
-      className="min-h-[80vh]"
+      className="min-h-[80vh] text-sm"
     >
-      <Text className="mb-4">Create new account</Text>
+      <Text className="mb-4">Login</Text>
       <Form.Root className="w-[360px] border border-neutral-300 p-6 rounded-md">
         <Form.Field name="email" className="grid mb-[10px]">
-          <Form.Label className="text-lime-300 mb-1 text-sm">Email</Form.Label>
+          <Form.Label className="text-lime-300 mb-1">Email</Form.Label>
           <Form.Control asChild>
             <input
               type="text"
               id="email"
               className="bg-white text-black rounded-md h-10 p-1"
               required
+              autoComplete="email"
             />
           </Form.Control>
         </Form.Field>
         <Form.Field name="password" className="grid mb-[10px]">
-          <Form.Label className="text-lime-300 mb-1 text-sm">
-            Password
-          </Form.Label>
+          <Form.Label className="text-lime-300 mb-1">Password</Form.Label>
           <Form.Control asChild>
             <input
               type="password"
               id="password"
               className="bg-white text-black rounded-md h-10 p-1"
               required
+              autoComplete="current-password"
             />
           </Form.Control>
         </Form.Field>

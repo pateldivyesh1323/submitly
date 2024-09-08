@@ -23,7 +23,7 @@ export const errorMiddleware = (
       : getErrorMsg(err) || "Internal server error";
 
   res.status(statusCode).json({
-    msg: message,
+    message,
   });
 };
 
