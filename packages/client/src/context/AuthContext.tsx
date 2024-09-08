@@ -53,6 +53,7 @@ export const AuthProvider = ({ children }: PropsType) => {
   const token = getStoredAccessToken();
 
   useEffect(() => {
+    setIsAuthLoading(true);
     if (token) {
       setIsAuthenticated(true);
     } else {
@@ -69,6 +70,7 @@ export const AuthProvider = ({ children }: PropsType) => {
     },
     onSuccess(data) {
       setStoredAccessToken(data.data.token);
+      setIsAuthenticated(true);
       navigate("/dashboard");
     },
   });
@@ -81,6 +83,7 @@ export const AuthProvider = ({ children }: PropsType) => {
     },
     onSuccess(data) {
       setStoredAccessToken(data.data.token);
+      setIsAuthenticated(true);
       navigate("/dashboard");
     },
   });
