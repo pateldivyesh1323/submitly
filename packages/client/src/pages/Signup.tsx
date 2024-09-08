@@ -15,7 +15,7 @@ export default function Signup() {
       <Text className="mb-4">Create new account</Text>
       <Form.Root className="w-[360px] border border-neutral-300 p-6 rounded-md">
         <Form.Field name="name" className="grid mb-[10px]">
-          <Form.Label className="text-lime-300 mb-1">Name</Form.Label>
+          <Form.Label className="text-lime-300 mb-1 text-sm">Name</Form.Label>
           <Form.Control asChild>
             <input
               type="text"
@@ -26,7 +26,7 @@ export default function Signup() {
           </Form.Control>
         </Form.Field>
         <Form.Field name="email" className="grid mb-[10px]">
-          <Form.Label className="text-lime-300 mb-1">Email</Form.Label>
+          <Form.Label className="text-lime-300 mb-1 text-sm">Email</Form.Label>
           <Form.Control asChild>
             <input
               type="text"
@@ -37,7 +37,9 @@ export default function Signup() {
           </Form.Control>
         </Form.Field>
         <Form.Field name="password" className="grid mb-[10px]">
-          <Form.Label className="text-lime-300 mb-1">Password</Form.Label>
+          <Form.Label className="text-lime-300 mb-1 text-sm">
+            Password
+          </Form.Label>
           <Form.Control asChild>
             <input
               type="password"
@@ -48,7 +50,7 @@ export default function Signup() {
           </Form.Control>
         </Form.Field>
         <Form.Field name="confirmPassword" className="grid mb-[10px]">
-          <Form.Label className="text-lime-300 mb-1">
+          <Form.Label className="text-lime-300 mb-1 text-sm">
             Confirm Password
           </Form.Label>
           <Form.Control asChild>

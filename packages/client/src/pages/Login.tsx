@@ -15,7 +15,7 @@ export default function Login() {
       <Text className="mb-4">Create new account</Text>
       <Form.Root className="w-[360px] border border-neutral-300 p-6 rounded-md">
         <Form.Field name="email" className="grid mb-[10px]">
-          <Form.Label className="text-lime-300 mb-1">Email</Form.Label>
+          <Form.Label className="text-lime-300 mb-1 text-sm">Email</Form.Label>
           <Form.Control asChild>
             <input
               type="text"
@@ -26,7 +26,9 @@ export default function Login() {
           </Form.Control>
         </Form.Field>
         <Form.Field name="password" className="grid mb-[10px]">
-          <Form.Label className="text-lime-300 mb-1">Password</Form.Label>
+          <Form.Label className="text-lime-300 mb-1 text-sm">
+            Password
+          </Form.Label>
           <Form.Control asChild>
             <input
               type="password"
