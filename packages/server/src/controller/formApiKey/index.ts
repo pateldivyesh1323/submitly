@@ -14,7 +14,7 @@ const generateApiKeyController = async ({ userId }: { userId: string }) => {
   });
 
   const newApiKey = await ApiKey.create({ user: userId });
-
+  console.log(newApiKey);
   return { status: 200, message: "Success", data: newApiKey };
 };
 
