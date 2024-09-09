@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import environments from "./environments";
 import userAuthenticationRoute from "./routes/user/authentication";
+import apiKeyRoute from "./routes/apiKey";
 import { errorMiddleware } from "./middlewares/error-handler";
 import connectDB from "./lib/db";
 
@@ -18,6 +19,7 @@ app.use(cors());
 
 // Routes
 app.use("/api/user/auth", userAuthenticationRoute);
+app.use("/api/apikey", apiKeyRoute);
 app.get("/", (req: Request, res: Response) => {
   res.status(200).json({ message: "Server status good" });
 });

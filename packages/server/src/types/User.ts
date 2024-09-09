@@ -1,3 +1,5 @@
+import { Model } from "mongoose";
+
 export interface UserType {
   name: string;
   email: string;
@@ -10,4 +12,8 @@ export interface UserWithDocType extends UserType, Document {
   updatedAt?: Date;
   matchPassword: (enteredPassword: string) => Promise<boolean>;
   generateAuthToken: () => string;
+}
+
+export interface UserModel extends Model<UserWithDocType> {
+  verifyToken: (token: string) => string;
 }

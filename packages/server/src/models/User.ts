@@ -1,9 +1,10 @@
 import mongoose, { Schema } from "mongoose";
-import { UserWithDocType } from "../types/User";
+import { UserModel, UserWithDocType } from "../types/User";
 import validator from "validator";
 import bcrypt from "bcryptjs";
 import environments from "../environments";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import { UnauthorizedError } from "../middlewares/error-handler";
 
 const userSchema = new Schema(
   {
@@ -60,6 +61,18 @@ userSchema.methods.generateAuthToken = function (): string {
   return token;
 };
 
-const User = mongoose.model<UserWithDocType>("User", userSchema);
+userSchema.statics.verifyToken = function (token: string): string {
+  try {
+    const decoded = jwt.verify(token, environments.JWT_SECRET as string);
+    if (typeof decoded === "object" && "id" in decoded) {
+      return (decoded as JwtPayload).id as string;
+    }
+    throw new UnauthorizedError("Invalid token: id not found");
+  } catch (error) {
+    throw new UnauthorizedError("Invalid token");
+  }
+};
+
+const User = mongoose.model<UserWithDocType, UserModel>("User", userSchema);
 
 export default User;
