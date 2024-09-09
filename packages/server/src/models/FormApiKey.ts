@@ -1,12 +1,12 @@
 import mongoose, { Schema } from "mongoose";
-import { v4 as uuidv4 } from "uuid";
-import { ApiKeyWithDocType } from "../types/ApiKey";
+import { FormApiKeyWithDocType } from "../types/FormApiKey";
+import crypto from "crypto";
 
 const apiKeySchema = new Schema(
   {
     key: {
       type: String,
-      default: uuidv4,
+      default: crypto.randomBytes(64).toString("hex"),
       unique: true,
     },
     user: {
@@ -23,6 +23,6 @@ const apiKeySchema = new Schema(
   { timestamps: true },
 );
 
-const ApiKey = mongoose.model<ApiKeyWithDocType>("ApiKey", apiKeySchema);
+const ApiKey = mongoose.model<FormApiKeyWithDocType>("ApiKey", apiKeySchema);
 
 export default ApiKey;

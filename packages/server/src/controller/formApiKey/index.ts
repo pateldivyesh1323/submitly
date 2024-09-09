@@ -1,4 +1,4 @@
-import ApiKey from "../../models/ApiKey";
+import ApiKey from "../../models/FormApiKey";
 
 const getApiKeyController = async ({ userId }: { userId: string }) => {
   let apiKey = await ApiKey.findOne({ user: userId });
@@ -11,10 +11,9 @@ const getApiKeyController = async ({ userId }: { userId: string }) => {
 const generateApiKeyController = async ({ userId }: { userId: string }) => {
   await ApiKey.findOneAndDelete({
     user: userId,
-    active: true,
   });
 
-  const newApiKey = ApiKey.create({ user: userId });
+  const newApiKey = await ApiKey.create({ user: userId });
 
   return { status: 200, message: "Success", data: newApiKey };
 };

@@ -1,10 +1,10 @@
 import express from "express";
 import { AppResponse } from "../../middlewares/error-handler";
-import authMiddleware from "../../middlewares/authMiddleware";
+import authMiddleware from "../../middlewares/AuthMiddleware";
 import {
   generateApiKeyController,
   getApiKeyController,
-} from "../../controller/apiKey";
+} from "../../controller/formApiKey";
 
 const router = express.Router();
 

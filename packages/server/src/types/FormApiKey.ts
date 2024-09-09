@@ -1,12 +1,12 @@
 import { UserType } from "./User";
 
-export interface ApiKeyType {
+export interface FormApiKeyType {
   user: UserType;
   key: string;
   active: boolean;
 }
 
-export interface ApiKeyWithDocType extends ApiKeyType, Document {
+export interface FormApiKeyWithDocType extends FormApiKeyType, Document {
   createdAt?: Date;
   updatedAt?: Date;
 }
