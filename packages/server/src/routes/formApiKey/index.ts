@@ -1,6 +1,6 @@
 import express from "express";
 import { AppResponse } from "../../middlewares/error-handler";
-import authMiddleware from "../../middlewares/AuthMiddleware";
+import authMiddleware from "../../middlewares/authMiddleware";
 import {
   generateApiKeyController,
   getApiKeyController,
