@@ -10,7 +10,7 @@ import FormPage from "./pages/Form";
 
 function App() {
   return (
-    <Box className="min-h-screen bg-darkSecondaryCust">
+    <Box className="min-h-screen bg-darkSecondaryCust pb-8">
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />

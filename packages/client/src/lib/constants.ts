@@ -4,3 +4,4 @@ export const LOGIN_MUTATION_KEY = "login";
 export const GET_API_KEY = "getApiKey";
 export const GENERATE_API_KEY = "generateApiKey";
 export const GET_FORMS = "getForms";
+export const CREATE_FORM_MUTATION_KEY = "createForm";

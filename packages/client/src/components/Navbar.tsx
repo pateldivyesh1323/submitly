@@ -9,7 +9,7 @@ export default function Navbar() {
     <Flex
       justify="between"
       align="center"
-      className="px-10 h-20 w-full bg-darkPrimaryCust"
+      className="px-10 h-20 w-full bg-darkPrimaryCust sticky top-0 z-10"
     >
       <Box className="font-guerrilla">
         <Link to="/">

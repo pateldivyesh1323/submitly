@@ -6,6 +6,7 @@ import { FormType } from "../types/Form";
 import { CopyIcon } from "@radix-ui/react-icons";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import CreateForm from "./CreateForm";
 
 export default function FormsListing() {
   const navigate = useNavigate();
@@ -19,7 +20,10 @@ export default function FormsListing() {
 
   return (
     <Flex align="center" justify="center" direction="column" className="w-full">
-      <Heading className="mb-4">Your forms</Heading>
+      <Flex justify="between" align="center" className="mb-4 w-full">
+        <Heading>Your forms</Heading>
+        <CreateForm />
+      </Flex>
       {isLoading && <Skeleton>Loading</Skeleton>}
       <Table.Root variant="surface" className="w-full">
         <Table.Header>
