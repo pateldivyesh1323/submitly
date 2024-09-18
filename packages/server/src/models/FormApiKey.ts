@@ -2,7 +2,7 @@ import mongoose, { Schema } from "mongoose";
 import { FormApiKeyWithDocType } from "../types/FormApiKey";
 import crypto from "crypto";
 
-const apiKeySchema = new Schema(
+const formApiKeySchema = new Schema(
   {
     key: {
       type: String,
@@ -23,6 +23,9 @@ const apiKeySchema = new Schema(
   { timestamps: true },
 );
 
-const ApiKey = mongoose.model<FormApiKeyWithDocType>("ApiKey", apiKeySchema);
+const FormApiKey = mongoose.model<FormApiKeyWithDocType>(
+  "FormApiKey",
+  formApiKeySchema,
+);
 
-export default ApiKey;
+export default FormApiKey;

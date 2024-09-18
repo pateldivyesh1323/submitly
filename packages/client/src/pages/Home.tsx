@@ -20,9 +20,6 @@ export default function Home() {
         direction="column"
         className="relative z-10"
       >
-        <Text color="lime" size="4" className="font-guerrilla">
-          Justification
-        </Text>
         <Text size="9" className="font-serif">
           Contact forms made easier
         </Text>
