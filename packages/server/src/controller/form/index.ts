@@ -20,6 +20,27 @@ const createFormController = async ({
   };
 };
 
+const getFormController = async ({
+  userId,
+  formId,
+}: {
+  userId: string;
+  formId: string;
+}) => {
+  if (!formId) {
+    throw new BadRequestError("Form id is required");
+  }
+  const form = await Form.findOne({ formId, userId });
+  if (!form) {
+    throw new BadRequestError("Form not found");
+  }
+  return {
+    status: 200,
+    message: "Form fetched successfully",
+    data: form,
+  };
+};
+
 const getAllFormsController = async (userId: string) => {
   const forms = await Form.find({ userId });
   return {
@@ -46,4 +67,9 @@ const deleteFormController = async ({
   };
 };
 
-export { createFormController, getAllFormsController, deleteFormController };
+export {
+  createFormController,
+  getFormController,
+  getAllFormsController,
+  deleteFormController,
+};

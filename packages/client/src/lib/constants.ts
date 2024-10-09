@@ -5,3 +5,5 @@ export const GET_API_KEY = "getApiKey";
 export const GENERATE_API_KEY = "generateApiKey";
 export const GET_FORMS = "getForms";
 export const CREATE_FORM_MUTATION_KEY = "createForm";
+export const GET_FORM_INFO = "getFormInfo";
+export const GET_FORM_SUBMISSIONS = "getFormSubmissions";

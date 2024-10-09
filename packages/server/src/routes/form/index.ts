@@ -5,6 +5,7 @@ import {
   createFormController,
   deleteFormController,
   getAllFormsController,
+  getFormController,
 } from "../../controller/form";
 
 const router = Router();
@@ -21,8 +22,15 @@ router.get("/all", authMiddleware, async (req, res, next) => {
 });
 
 // Get form by id
-router.get("/:id", authMiddleware, (req, res, next) => {
+router.get("/:id", authMiddleware, async (req, res, next) => {
   try {
+    const userId = req.headers["userId"] as string;
+    const formId = req.params.id;
+    const { status, message, data } = await getFormController({
+      userId,
+      formId,
+    });
+    return AppResponse(res, status, message, data);
   } catch (error) {
     next(error);
   }

@@ -9,3 +9,13 @@ export const createForm = async (formName: string) => {
   const { data } = await apiClient.post("/api/form", { name: formName });
   return data;
 };
+
+export const getFormInfo = async (formId: string) => {
+  const { data } = await apiClient.get(`/api/form/${formId}`);
+  return data;
+};
+
+export const getFormSubmissions = async (formId: string) => {
+  const { data } = await apiClient.get(`/form/submit/${formId}`);
+  return data;
+};
