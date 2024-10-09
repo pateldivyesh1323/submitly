@@ -1,10 +1,12 @@
 import { CopyIcon } from "@radix-ui/react-icons";
 import {
+  Button,
   Code,
   DataList,
   Flex,
   Heading,
   IconButton,
+  Separator,
   Skeleton,
   Spinner,
   Text,
@@ -84,17 +86,34 @@ export default function FormPage() {
           )}
         </DataList.Item>
       </DataList.Root>
-      <Flex align="center" direction="column" justify="center" gap="4">
+      <Flex className="w-full" direction="column" justify="center" gap="4">
         <Heading as="h2">Submissions</Heading>
+        <Separator className="w-full h-[2px]" color="lime" />{" "}
         {formSubmissionsLoading ? (
           <Spinner />
         ) : formSubmissionsData && formSubmissionsData.data.length === 0 ? (
           <Text>No submissions found!</Text>
         ) : formSubmissionsData ? (
-          <div>Test</div>
+          formSubmissionsData.data.map((data: any) => (
+            <DataList.Root className="w-full">
+              {Object.entries(data.response).map(([key, value]) => (
+                <DataList.Item key={key}>
+                  <DataList.Label minWidth="88px" className="capitalize">
+                    {key}
+                  </DataList.Label>
+                  <DataList.Value>{value as string}</DataList.Value>
+                </DataList.Item>
+              ))}
+              <DataList.Item className="bg-neutral-600 h-[0.1px]"></DataList.Item>
+            </DataList.Root>
+          ))
         ) : (
           <Text>Error loading submissions.</Text>
         )}
+      </Flex>
+      <Flex justify="between" className="w-full">
+        <Button>Previous</Button>
+        <Button>Next</Button>
       </Flex>
     </Flex>
   );
