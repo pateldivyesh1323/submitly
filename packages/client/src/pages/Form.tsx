@@ -138,8 +138,8 @@ export default function FormPage() {
           ) : formSubmissionsData && formSubmissionsData.data.length === 0 ? (
             <Text>No submissions found!</Text>
           ) : formSubmissionsData ? (
-            formSubmissionsData.data.map((data: any) => (
-              <>
+            <>
+              {formSubmissionsData.data.map((data: any) => (
                 <DataList.Root className="w-full">
                   {Object.entries(data.response).map(([key, value]) => (
                     <DataList.Item key={key}>
@@ -151,16 +151,16 @@ export default function FormPage() {
                   ))}
                   <DataList.Item className="bg-neutral-600 h-[0.1px]"></DataList.Item>
                 </DataList.Root>
-                <Flex justify="between" className="w-full">
-                  <Button color="blue" className="cursor-pointer">
-                    Previous
-                  </Button>
-                  <Button color="blue" className="cursor-pointer">
-                    Next
-                  </Button>
-                </Flex>
-              </>
-            ))
+              ))}
+              <Flex justify="between" className="w-full">
+                <Button color="blue" className="cursor-pointer">
+                  Previous
+                </Button>
+                <Button color="blue" className="cursor-pointer">
+                  Next
+                </Button>
+              </Flex>
+            </>
           ) : (
             <Text>Error loading submissions.</Text>
           )}
