@@ -20,10 +20,14 @@ export default function Home() {
         direction="column"
         className="relative z-10"
       >
-        <Text size="9" className="font-serif">
+        <Text className="font-serif lg:text-6xl md:text-4xl text-2xl">
           Contact forms made easier
         </Text>
-        <Text color="gray" align="center">
+        <Text
+          color="gray"
+          align="center"
+          className="text-justify text-sm lg:text-xl"
+        >
           Submitly is a seamless form submission solution that simplifies how
           users interact with your website. Without the need for a backend
           server, Submitly allows you to receive form submissions directly into
