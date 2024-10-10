@@ -7,6 +7,7 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import PrivateRoute from "./components/PrivateRoute";
 import FormPage from "./pages/Form";
+import Documentation from "./pages/Documentation";
 
 function App() {
   return (
@@ -24,7 +25,8 @@ function App() {
               <Dashboard />
             </PrivateRoute>
           }
-        ></Route>
+        />
+        <Route path="/docs" element={<Documentation />} />
       </Routes>
     </Box>
   );
