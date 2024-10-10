@@ -22,3 +22,7 @@ export const getFormSubmissions = async (
   const { data } = await apiClient.get(`/form/submit/${formId}?page=${page}`);
   return data;
 };
+
+export const deleteForm = async (formId: string) => {
+  await apiClient.delete(`/api/form/${formId}`);
+};

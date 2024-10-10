@@ -1,5 +1,6 @@
 import { BadRequestError } from "../../middlewares/error-handler";
 import Form from "../../models/Form";
+import { FormSubmission } from "../../models/FormSubmissionModel";
 
 const createFormController = async ({
   userId,
@@ -61,6 +62,7 @@ const deleteFormController = async ({
   if (!form) {
     throw new BadRequestError("Form not found");
   }
+  await FormSubmission.deleteMany({ formId });
   return {
     status: 200,
     message: "Form deleted successfully",

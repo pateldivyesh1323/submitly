@@ -11,13 +11,18 @@ import {
   Spinner,
   Text,
 } from "@radix-ui/themes";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
-import { getFormInfo, getFormSubmissions } from "../queries/form";
-import { GET_FORM_INFO, GET_FORM_SUBMISSIONS } from "../lib/constants";
+import { deleteForm, getFormInfo, getFormSubmissions } from "../queries/form";
+import {
+  DELETE_FORM,
+  GET_FORM_INFO,
+  GET_FORM_SUBMISSIONS,
+} from "../lib/constants";
 import * as Dialog from "@radix-ui/react-dialog";
 import { useEffect, useState } from "react";
+import { getErrorMessage } from "../lib/error";
 
 export default function FormPage() {
   const params = useParams();
@@ -40,13 +45,25 @@ export default function FormPage() {
       queryFn: () => getFormSubmissions(params.id || "", currentPage),
     });
 
+  const { mutate: deleteMutation } = useMutation({
+    mutationKey: [DELETE_FORM, params.id],
+    mutationFn: () => deleteForm(params.id || ""),
+    onSuccess: () => {
+      toast.success("Form deleted successfully");
+      navigate("/dashboard");
+    },
+    onError: (error) => {
+      toast.error(getErrorMessage(error));
+    },
+  });
+
   const handleFormIdCopy = () => {
     navigator.clipboard.writeText(params.id || "");
     toast.success("Form ID copied to clipboard");
   };
 
   const handleFormDelete = () => {
-    console.log("Form deleted");
+    deleteMutation();
     setIsFormOpen(false);
   };
 
@@ -180,6 +197,9 @@ export default function FormPage() {
                 >
                   Previous
                 </Button>
+                <Text color="gray">
+                  Page {currentPage} of {totalPages}
+                </Text>
                 <Button
                   color="blue"
                   className="cursor-pointer"
