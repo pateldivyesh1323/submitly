@@ -12,17 +12,22 @@ import {
   Text,
 } from "@radix-ui/themes";
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { getFormInfo, getFormSubmissions } from "../queries/form";
 import { GET_FORM_INFO, GET_FORM_SUBMISSIONS } from "../lib/constants";
 import * as Dialog from "@radix-ui/react-dialog";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function FormPage() {
   const params = useParams();
+  const query = new URLSearchParams(location.search);
+  const currentPage = query.get("page") || "1";
+  const navigate = useNavigate();
 
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [formSubmissions, setFormSubmissions] = useState([]);
+  const [totalPages, setTotalPages] = useState(1);
 
   const { data: formInfoData, isLoading: formInfoLoading } = useQuery({
     queryKey: [GET_FORM_INFO, params.id],
@@ -31,8 +36,8 @@ export default function FormPage() {
 
   const { data: formSubmissionsData, isLoading: formSubmissionsLoading } =
     useQuery({
-      queryKey: [GET_FORM_SUBMISSIONS, params.id],
-      queryFn: () => getFormSubmissions(params.id || ""),
+      queryKey: [GET_FORM_SUBMISSIONS, params.id, currentPage],
+      queryFn: () => getFormSubmissions(params.id || "", currentPage),
     });
 
   const handleFormIdCopy = () => {
@@ -41,10 +46,24 @@ export default function FormPage() {
   };
 
   const handleFormDelete = () => {
-    // Yet to be implemented
     console.log("Form deleted");
     setIsFormOpen(false);
   };
+
+  const handleVisitNextPage = () => {
+    navigate(`/form/${params.id}?page=${parseInt(currentPage) + 1}`);
+  };
+
+  const handleVisitPreviousPage = () => {
+    navigate(`/form/${params.id}?page=${parseInt(currentPage) - 1}`);
+  };
+
+  useEffect(() => {
+    if (formSubmissionsData) {
+      setFormSubmissions(formSubmissionsData.data.formSubmissions);
+      setTotalPages(formSubmissionsData.data.totalPages);
+    }
+  }, [formSubmissionsData]);
 
   return (
     <>
@@ -135,12 +154,12 @@ export default function FormPage() {
           <Separator className="w-full h-[2px]" color="lime" />{" "}
           {formSubmissionsLoading ? (
             <Spinner />
-          ) : formSubmissionsData && formSubmissionsData.data.length === 0 ? (
+          ) : formSubmissions && formSubmissions.length === 0 ? (
             <Text>No submissions found!</Text>
-          ) : formSubmissionsData ? (
+          ) : formSubmissions ? (
             <>
-              {formSubmissionsData.data.map((data: any) => (
-                <DataList.Root className="w-full">
+              {formSubmissions.map((data: any, index) => (
+                <DataList.Root className="w-full" key={index}>
                   {Object.entries(data.response).map(([key, value]) => (
                     <DataList.Item key={key}>
                       <DataList.Label minWidth="88px" className="capitalize">
@@ -153,10 +172,20 @@ export default function FormPage() {
                 </DataList.Root>
               ))}
               <Flex justify="between" className="w-full">
-                <Button color="blue" className="cursor-pointer">
+                <Button
+                  color="blue"
+                  className="cursor-pointer"
+                  disabled={currentPage == "1"}
+                  onClick={handleVisitPreviousPage}
+                >
                   Previous
                 </Button>
-                <Button color="blue" className="cursor-pointer">
+                <Button
+                  color="blue"
+                  className="cursor-pointer"
+                  disabled={currentPage == totalPages.toString()}
+                  onClick={handleVisitNextPage}
+                >
                   Next
                 </Button>
               </Flex>

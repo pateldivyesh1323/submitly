@@ -15,7 +15,10 @@ export const getFormInfo = async (formId: string) => {
   return data;
 };
 
-export const getFormSubmissions = async (formId: string) => {
-  const { data } = await apiClient.get(`/form/submit/${formId}`);
+export const getFormSubmissions = async (
+  formId: string,
+  page = "1" as string,
+) => {
+  const { data } = await apiClient.get(`/form/submit/${formId}?page=${page}`);
   return data;
 };

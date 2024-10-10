@@ -29,10 +29,12 @@ router.post("/", formSubmissionMiddleware, async (req, res, next) => {
 router.get("/:formId", authMiddleware, async (req, res, next) => {
   try {
     const formId = req.params.formId;
+    const pageNo = req.query.page as string;
     const userId = req.headers["userId"] as string;
     const { status, message, data } = await getFormSubmissionsController(
       formId,
       userId,
+      pageNo,
     );
     return AppResponse(res, status, message, data);
   } catch (error) {

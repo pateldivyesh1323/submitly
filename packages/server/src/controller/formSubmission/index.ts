@@ -2,6 +2,8 @@ import { BadRequestError } from "../../middlewares/error-handler";
 import Form from "../../models/Form";
 import { FormSubmission } from "../../models/FormSubmissionModel";
 
+const limit = 10;
+
 async function createFormSubmissionController({ formId, data }: any) {
   let formSubmission = await FormSubmission.create({ formId, response: data });
   return {
@@ -11,16 +13,31 @@ async function createFormSubmissionController({ formId, data }: any) {
   };
 }
 
-async function getFormSubmissionsController(formId: string, userId: string) {
+async function getFormSubmissionsController(
+  formId: string,
+  userId: string,
+  pageNo = "1" as string,
+) {
   const form = await Form.find({ formId, userId });
   if (!form) {
     throw new BadRequestError("Form not found");
   }
-  const formSubmissions = await FormSubmission.find({ formId });
+
+  const query = { formId };
+  const formSubmissions = await FormSubmission.find(query)
+    .sort({ createdAt: -1 })
+    .skip((parseInt(pageNo) - 1) * limit)
+    .limit(limit);
+  const totalResults = await FormSubmission.countDocuments(query);
+
   return {
     status: 200,
     message: "Form submissions fetched successfully",
-    data: formSubmissions,
+    data: {
+      currentPage: parseInt(pageNo),
+      formSubmissions,
+      totalPages: Math.ceil(totalResults / limit),
+    },
   };
 }
 
