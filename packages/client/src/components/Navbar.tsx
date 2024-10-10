@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Text } from "@radix-ui/themes";
+import { Button, Flex, Text } from "@radix-ui/themes";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -11,13 +11,17 @@ export default function Navbar() {
       align="center"
       className="px-10 h-20 w-full bg-darkPrimaryCust sticky top-0 z-10"
     >
-      <Box className="font-guerrilla">
-        <Link to="/">
+      <Flex align="center" className="gap-4">
+        <Link to="/" className="font-guerrilla">
           <Text color="lime" size="6">
             Submitly
           </Text>
         </Link>
-      </Box>
+        <Link to="/docs" className="hover:underline text-sm text-neutral-200">
+          Documentation
+        </Link>
+      </Flex>
+
       <Flex className="space-x-4" align="center">
         {!isAuthenticated ? (
           <>
