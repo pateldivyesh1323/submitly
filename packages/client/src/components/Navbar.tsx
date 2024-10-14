@@ -14,7 +14,7 @@ export default function Navbar() {
       <Flex align="center" className="gap-4">
         <Link to="/" className="font-guerrilla">
           <Text color="lime" size="6">
-            Submitly
+            HushHub
           </Text>
         </Link>
         <Link to="/docs" className="hover:underline text-sm text-neutral-200">

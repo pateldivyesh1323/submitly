@@ -28,9 +28,9 @@ export default function Home() {
           align="center"
           className="text-justify text-sm lg:text-xl"
         >
-          Submitly is a seamless form submission solution that simplifies how
+          HushHub is a seamless form submission solution that simplifies how
           users interact with your website. Without the need for a backend
-          server, Submitly allows you to receive form submissions directly into
+          server, HushHub allows you to receive form submissions directly into
           your inbox. It offers an intuitive and user-friendly experience,
           helping you streamline communication and data collection for any
           online project. Perfect for landing pages, portfolio sites, or
