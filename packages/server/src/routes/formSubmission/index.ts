@@ -6,10 +6,22 @@ import {
   getFormSubmissionsController,
 } from "../../controller/formSubmission";
 import authMiddleware from "../../middlewares/authMiddleware";
+import rateLimit from "express-rate-limit";
 
 const router = Router();
 
-router.post("/", formSubmissionMiddleware, async (req, res, next) => {
+// Form Rate Limiter
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // Maximum 10 requests per IP address
+  message: async (req: any, res: any) => {
+    res.status(429).json({
+      message: "Too many requests. Please try again later",
+    });
+  },
+});
+
+router.post("/", formSubmissionMiddleware, limiter, async (req, res, next) => {
   try {
     const formId = req.headers["form-id"];
     const body = req.body;

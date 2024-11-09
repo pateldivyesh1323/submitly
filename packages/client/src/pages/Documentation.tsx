@@ -127,25 +127,35 @@ const Documentation = () => {
       className="gap-8 p-8 w-[80vw] mx-auto text-neutral-300"
     >
       <Heading className="text-center">Documentation</Heading>
-
-      <section className="mb-6">
-        <Heading as="h3">Introduction</Heading>
-        <Text>
-          Welcome to the API documentation for submitting forms via HTTP POST
-          requests. This guide will walk you through the process of sending form
-          data to our server using different programming languages and cURL.
-        </Text>
-        <br />
-        <Text>
-          The form submission endpoint requires specific headers for
-          authentication, and you will need to replace placeholders with your
-          form's unique ID and API key.
-        </Text>
-      </section>
-
-      <Separator className="w-full" />
-
       <section>
+        <Heading as="h3" className="mb-5">
+          Introduction
+        </Heading>
+        <Flex direction="column">
+          <Text>
+            Welcome to the API documentation for submitting forms via HTTP POST
+            requests. This guide will walk you through the process of sending
+            form data to our server using different programming languages and
+            cURL.
+          </Text>
+          <br />
+          <Text>
+            The form submission endpoint requires specific headers for
+            authentication, and you will need to replace placeholders with your
+            form's unique ID and API key.
+          </Text>
+          <br />
+          <Text color="gray" size="2">
+            Note: The form submissions are currently limited to 10 requests per
+            15 minutes per IP Address to decrease spam.
+          </Text>
+        </Flex>
+      </section>
+      <Separator className="w-full" />
+      <section>
+        <Heading as="h5" className="mb-4">
+          Steps for integrating
+        </Heading>
         <ol className="list-outside list-decimal flex flex-col gap-8">
           <li>
             <Text className="font-semibold">URL:</Text>
