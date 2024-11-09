@@ -26,7 +26,9 @@ export default async function formSubmissionMiddleware(
     if (!checkFormId) {
       throw new UnauthorizedError("Invalid form id");
     }
-
+    if (checkFormId.active === false) {
+      throw new UnauthorizedError("Form is inactive");
+    }
     req.headers["form-id"] = checkFormId.formId;
     next();
   } catch (error) {
