@@ -18,6 +18,10 @@ const formSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    active: {
+      type: Boolean,
+      default: true,
+    },
   },
   {
     timestamps: true,

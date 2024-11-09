@@ -10,20 +10,28 @@ import {
   Separator,
   Skeleton,
   Spinner,
+  Switch,
   Text,
 } from "@radix-ui/themes";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
-import { deleteForm, getFormInfo, getFormSubmissions } from "../queries/form";
+import {
+  deleteForm,
+  getFormInfo,
+  getFormSubmissions,
+  toggleFormActivation,
+} from "../queries/form";
 import {
   DELETE_FORM,
   GET_FORM_INFO,
   GET_FORM_SUBMISSIONS,
+  TOGGLE_FORM_ACTIVATION,
 } from "../lib/constants";
 import * as Dialog from "@radix-ui/react-dialog";
 import { useEffect, useState } from "react";
 import { getErrorMessage } from "../lib/error";
+import { queryClient } from "../lib/apiClient";
 
 export default function FormPage() {
   const params = useParams();
@@ -33,7 +41,7 @@ export default function FormPage() {
   const navigate = useNavigate();
 
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [formSubmissions, setFormSubmissions] = useState([]);
+  const [formSubmissions, setFormSubmissions] = useState([{ response: {} }]);
   const [totalPages, setTotalPages] = useState(1);
 
   const { data: formInfoData, isLoading: formInfoLoading } = useQuery({
@@ -58,6 +66,25 @@ export default function FormPage() {
       toast.error(getErrorMessage(error));
     },
   });
+
+  const { mutate: toggleFormActivationMutation } = useMutation({
+    mutationKey: [TOGGLE_FORM_ACTIVATION, params.id],
+    mutationFn: () => toggleFormActivation(params.id || ""),
+    onSuccess: (data) => {
+      toast.success(data?.message || "Updated successfully");
+      queryClient.invalidateQueries({
+        queryKey: [GET_FORM_INFO, params.id],
+        exact: true,
+      });
+    },
+    onError: (error) => {
+      toast.error(getErrorMessage(error));
+    },
+  });
+
+  const handleToggleMutation = () => {
+    toggleFormActivationMutation();
+  };
 
   const handleFormIdCopy = () => {
     navigator.clipboard.writeText(params.id || "");
@@ -147,9 +174,25 @@ export default function FormPage() {
             )}
           </DataList.Item>
           <DataList.Item>
+            <DataList.Label minWidth="88px">Active</DataList.Label>
+            {formInfoLoading ? (
+              <Skeleton className="w-fit">
+                <Switch defaultChecked />
+              </Skeleton>
+            ) : (
+              <Switch
+                defaultChecked={formInfoData.data.active}
+                className="cursor-pointer"
+                onClick={handleToggleMutation}
+              />
+            )}
+          </DataList.Item>
+          <DataList.Item>
             <Dialog.Root open={isFormOpen} onOpenChange={setIsFormOpen}>
               <Dialog.Trigger asChild>
-                <Button color="red">Delete Form</Button>
+                <Button color="red" className="cursor-pointer">
+                  Delete Form
+                </Button>
               </Dialog.Trigger>
               <Dialog.Portal>
                 <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-50" />

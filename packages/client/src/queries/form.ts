@@ -29,3 +29,8 @@ export const getFormSubmissions = async (
 export const deleteForm = async (formId: string) => {
   await apiClient.delete(`/api/form/${formId}`);
 };
+
+export const toggleFormActivation = async (formId: string) => {
+  const { data } = await apiClient.put(`/api/form/${formId}/toggleactivation`);
+  return data;
+};
