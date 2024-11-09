@@ -69,9 +69,32 @@ const deleteFormController = async ({
   };
 };
 
+const toggleFormActivationController = async ({
+  userId,
+  formId,
+}: {
+  userId: string;
+  formId: string;
+}) => {
+  const form = await Form.findOne({ formId, userId });
+  if (!form) {
+    throw new BadRequestError("Form not found");
+  }
+
+  await Form.updateOne({ formId }, { active: !form.active });
+
+  return {
+    status: 200,
+    message: form.active
+      ? "Form deactivated successfully!"
+      : "Form activated successfully!",
+  };
+};
+
 export {
   createFormController,
   getFormController,
   getAllFormsController,
   deleteFormController,
+  toggleFormActivationController,
 };

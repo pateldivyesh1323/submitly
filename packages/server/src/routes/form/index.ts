@@ -6,6 +6,7 @@ import {
   deleteFormController,
   getAllFormsController,
   getFormController,
+  toggleFormActivationController,
 } from "../../controller/form";
 
 const router = Router();
@@ -65,5 +66,23 @@ router.delete("/:formId", authMiddleware, async (req, res, next) => {
     next(error);
   }
 });
+
+router.put(
+  "/:formId/toggleactivation",
+  authMiddleware,
+  async (req, res, next) => {
+    try {
+      const userId = req.headers["userId"] as string;
+      const formId = req.params.formId;
+      const { status, message } = await toggleFormActivationController({
+        userId,
+        formId,
+      });
+      return AppResponse(res, status, message);
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
 export default router;

@@ -8,3 +8,4 @@ export const CREATE_FORM_MUTATION_KEY = "createForm";
 export const GET_FORM_INFO = "getFormInfo";
 export const GET_FORM_SUBMISSIONS = "getFormSubmissions";
 export const DELETE_FORM = "deleteForm";
+export const TOGGLE_FORM_ACTIVATION = "toggleFormActivation";
