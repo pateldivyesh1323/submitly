@@ -17,6 +17,7 @@ async function getFormSubmissionsController(
   formId: string,
   userId: string,
   pageNo = "1" as string,
+  sortBy = "latest" as string,
 ) {
   const form = await Form.find({ formId, userId });
   if (!form) {
@@ -25,7 +26,7 @@ async function getFormSubmissionsController(
 
   const query = { formId };
   const formSubmissions = await FormSubmission.find(query)
-    .sort({ createdAt: -1 })
+    .sort({ createdAt: sortBy === "latest" ? -1 : 1 })
     .skip((parseInt(pageNo) - 1) * limit)
     .limit(limit);
   const totalResults = await FormSubmission.countDocuments(query);

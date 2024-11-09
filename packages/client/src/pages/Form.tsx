@@ -6,13 +6,14 @@ import {
   Flex,
   Heading,
   IconButton,
+  Select,
   Separator,
   Skeleton,
   Spinner,
   Text,
 } from "@radix-ui/themes";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { deleteForm, getFormInfo, getFormSubmissions } from "../queries/form";
 import {
@@ -28,6 +29,7 @@ export default function FormPage() {
   const params = useParams();
   const query = new URLSearchParams(location.search);
   const currentPage = query.get("page") || "1";
+  const sortBy = query.get("sort") || "latest";
   const navigate = useNavigate();
 
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -41,8 +43,8 @@ export default function FormPage() {
 
   const { data: formSubmissionsData, isLoading: formSubmissionsLoading } =
     useQuery({
-      queryKey: [GET_FORM_SUBMISSIONS, params.id, currentPage],
-      queryFn: () => getFormSubmissions(params.id || "", currentPage),
+      queryKey: [GET_FORM_SUBMISSIONS, params.id, currentPage, sortBy],
+      queryFn: () => getFormSubmissions(params.id || "", currentPage, sortBy),
     });
 
   const { mutate: deleteMutation } = useMutation({
@@ -68,11 +70,27 @@ export default function FormPage() {
   };
 
   const handleVisitNextPage = () => {
-    navigate(`/form/${params.id}?page=${parseInt(currentPage) + 1}`);
+    const params = new URLSearchParams(location.search);
+    params.set(
+      "page",
+      (parseInt(params.get("page") || "1", 10) + 1).toString(),
+    );
+    navigate(`${location.pathname}?${params.toString()}`);
   };
 
   const handleVisitPreviousPage = () => {
-    navigate(`/form/${params.id}?page=${parseInt(currentPage) - 1}`);
+    const params = new URLSearchParams(location.search);
+    params.set(
+      "page",
+      (parseInt(params.get("page") || "1", 10) - 1).toString(),
+    );
+    navigate(`${location.pathname}?${params.toString()}`);
+  };
+
+  const handleChangeSort = (value: string) => {
+    const params = new URLSearchParams(location.search);
+    params.set("sort", value);
+    navigate(`${location.pathname}?${params.toString()}`);
   };
 
   useEffect(() => {
@@ -167,7 +185,19 @@ export default function FormPage() {
           </DataList.Item>
         </DataList.Root>
         <Flex className="w-full" direction="column" justify="center" gap="4">
-          <Heading as="h2">Submissions</Heading>
+          <Flex className="w-full" justify="between">
+            <Heading as="h2">Submissions</Heading>
+            <Select.Root defaultValue={sortBy} onValueChange={handleChangeSort}>
+              <Select.Trigger />
+              <Select.Content>
+                <Select.Group>
+                  <Select.Label>Sort by:</Select.Label>
+                  <Select.Item value="latest">Latest</Select.Item>
+                  <Select.Item value="oldest">Oldest</Select.Item>
+                </Select.Group>
+              </Select.Content>
+            </Select.Root>
+          </Flex>
           <Separator className="w-full h-[2px]" color="lime" />{" "}
           {formSubmissionsLoading ? (
             <Spinner />
@@ -175,7 +205,7 @@ export default function FormPage() {
             <Text>No submissions found!</Text>
           ) : formSubmissions ? (
             <>
-              {formSubmissions.map((data: any, index) => (
+              {formSubmissions.map((data, index) => (
                 <DataList.Root className="w-full" key={index}>
                   {Object.entries(data.response).map(([key, value]) => (
                     <DataList.Item key={key}>

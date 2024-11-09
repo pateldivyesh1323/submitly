@@ -18,8 +18,11 @@ export const getFormInfo = async (formId: string) => {
 export const getFormSubmissions = async (
   formId: string,
   page = "1" as string,
+  sortBy = "latest" as string,
 ) => {
-  const { data } = await apiClient.get(`/form/submit/${formId}?page=${page}`);
+  const { data } = await apiClient.get(
+    `/form/submit/${formId}?page=${page}&sort=${sortBy}`,
+  );
   return data;
 };
 
