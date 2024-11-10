@@ -1,8 +1,23 @@
-import { Box, Flex, Tabs, Text } from "@radix-ui/themes";
+import { Box, Flex, Tabs } from "@radix-ui/themes";
 import Details from "../components/FormDetails/Details";
 import Submissions from "../components/FormDetails/Submissions";
+import Analytics from "../components/FormDetails/Analytics";
+import { useNavigate } from "react-router-dom";
 
 export default function FormPage() {
+  const navigate = useNavigate();
+  const query = new URLSearchParams(location.search);
+  const tab = query.get("tab") || "details";
+
+  const handleTabChange = (value: string) => {
+    const params = new URLSearchParams(location.search);
+    params.forEach((_, key) => {
+      params.delete(key);
+    });
+    params.set("tab", value);
+    navigate(`${location.pathname}?${params.toString()}`);
+  };
+
   return (
     <>
       <Flex
@@ -12,21 +27,25 @@ export default function FormPage() {
         className="mt-4 w-[90vw] mx-auto"
         gap="8"
       >
-        <Tabs.Root defaultValue="account" className="w-full">
+        <Tabs.Root
+          defaultValue={tab}
+          className="w-full"
+          onValueChange={handleTabChange}
+        >
           <Tabs.List color="blue">
-            <Tabs.Trigger value="account">Details</Tabs.Trigger>
-            <Tabs.Trigger value="documents">Submissions</Tabs.Trigger>
-            <Tabs.Trigger value="settings">Analytics</Tabs.Trigger>
+            <Tabs.Trigger value="details">Details</Tabs.Trigger>
+            <Tabs.Trigger value="submissions">Submissions</Tabs.Trigger>
+            <Tabs.Trigger value="analytics">Analytics</Tabs.Trigger>
           </Tabs.List>
           <Box pt="3">
-            <Tabs.Content value="account">
+            <Tabs.Content value="details">
               <Details />
             </Tabs.Content>
-            <Tabs.Content value="documents">
+            <Tabs.Content value="submissions">
               <Submissions />
             </Tabs.Content>
-            <Tabs.Content value="settings">
-              <Text size="2">Coming soon</Text>
+            <Tabs.Content value="analytics">
+              <Analytics />
             </Tabs.Content>
           </Box>
         </Tabs.Root>
