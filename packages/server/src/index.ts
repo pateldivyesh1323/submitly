@@ -4,6 +4,7 @@ import environments from "./environments";
 import userAuthenticationRoute from "./routes/user/authentication";
 import formRoute from "./routes/form";
 import apiKeyRoute from "./routes/formApiKey";
+import formAnalyticsRoute from "./routes/formAnalytics";
 import formSubmissionRoute from "./routes/formSubmission";
 import { errorMiddleware } from "./middlewares/error-handler";
 import connectDB from "./lib/db";
@@ -35,6 +36,7 @@ app.use(cors({ origin: environments.ORIGIN_URI, credentials: true }));
 // App Routes
 app.use("/api/user/auth", userAuthenticationRoute);
 app.use("/api/formApikey", apiKeyRoute);
+app.use("/api/form/analytics", formAnalyticsRoute);
 app.use("/api/form", formRoute);
 app.get("/", (req: Request, res: Response) => {
   res.status(200).json({ message: "Server status good" });
