@@ -53,7 +53,7 @@ export default function FormsListing() {
             formsData.map((data: FormType) => (
               <Table.Row key={data.formId}>
                 <Table.RowHeaderCell>{data.name}</Table.RowHeaderCell>
-                <Table.Cell className="flex h-full">
+                <Table.Cell className="flex h-full items-center">
                   <Text className="mr-2">{data.formId}</Text>
                   <CopyIcon
                     color="gray"
