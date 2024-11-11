@@ -44,11 +44,13 @@ router.get("/:formId", authMiddleware, async (req, res, next) => {
     const pageNo = req.query.page as string;
     const sortBy = req.query.sort as string;
     const userId = req.headers["userId"] as string;
+    const keyword = req.query.keyword as string;
     const { status, message, data } = await getFormSubmissionsController(
       formId,
       userId,
       pageNo,
       sortBy,
+      keyword,
     );
     return AppResponse(res, status, message, data);
   } catch (error) {
