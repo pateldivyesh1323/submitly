@@ -5,3 +5,8 @@ export interface FormType {
 }
 
 export type FormsType = FormType[];
+
+export type AnalyticsChartDataType = {
+  _id: string;
+  submissionCount: number;
+};

@@ -1,5 +1,6 @@
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { Flex, Text } from "@radix-ui/themes";
+import { Link } from "react-router-dom";
 
 export default function Home() {
   return (
@@ -37,6 +38,14 @@ export default function Home() {
           businesses that want fast and efficient form management without
           complicated server setups.
         </Text>
+        <Link to="/docs">
+          <Flex align="center" className="gap-1 hover:gap-4 transition-all">
+            <Text color="lime">Go to Documentation</Text>
+            <Text color="lime" size="7">
+              &rarr;
+            </Text>
+          </Flex>
+        </Link>
       </Flex>
     </Flex>
   );
