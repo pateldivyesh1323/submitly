@@ -13,7 +13,7 @@ export default function Navbar() {
     >
       <Flex align="center" className="gap-4">
         <Link to="/" className="font-guerrilla">
-          <Text color="lime" size="6">
+          <Text color="orange" size="6">
             Submitly
           </Text>
         </Link>

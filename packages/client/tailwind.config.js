@@ -10,6 +10,7 @@ export default {
       },
       fontFamily: {
         guerrilla: ["Protest Guerrilla", "sans-serif"],
+        doto: ["Doto", "sans-serif"],
       },
     },
   },

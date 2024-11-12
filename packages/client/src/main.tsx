@@ -13,7 +13,7 @@ import { AuthProvider } from "./context/AuthContext.tsx";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
-      <Theme appearance="dark" accentColor="lime">
+      <Theme appearance="dark" accentColor="orange">
         <QueryClientProvider client={queryClient}>
           <AuthProvider>
             <Toaster />
