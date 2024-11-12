@@ -18,13 +18,43 @@ async function getFormSubmissionsController(
   userId: string,
   pageNo = "1" as string,
   sortBy = "latest" as string,
+  keyword = "" as string,
 ) {
   const form = await Form.find({ formId, userId });
   if (!form) {
     throw new BadRequestError("Form not found");
   }
 
-  const query = { formId };
+  let query: any = { formId };
+
+  if (keyword) {
+    query["$or"] = [
+      {
+        response: {
+          regex: keyword,
+          options: "i",
+        },
+      },
+      {
+        $expr: {
+          $regexMatch: {
+            input: {
+              $reduce: {
+                input: { $objectToArray: "$response" },
+                initialValue: "",
+                in: {
+                  $concat: ["$$value", " ", { $toString: "$$this.v" }],
+                },
+              },
+            },
+            regex: keyword,
+            options: "i",
+          },
+        },
+      },
+    ];
+  }
+
   const formSubmissions = await FormSubmission.find(query)
     .sort({ createdAt: sortBy === "latest" ? -1 : 1 })
     .skip((parseInt(pageNo) - 1) * limit)
