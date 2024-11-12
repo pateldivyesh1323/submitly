@@ -6,9 +6,10 @@ import { featuresContent } from "../content";
 import { DeviceFrameset } from "react-device-frameset";
 import "react-device-frameset/styles/marvel-devices.min.css";
 import { toast } from "sonner";
+import { FormEvent } from "react";
 
 export default function Home() {
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     toast.success("Form submitted successfully!");
   };
