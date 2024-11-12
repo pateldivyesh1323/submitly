@@ -3,8 +3,16 @@ import { Flex, Grid, Heading, Text } from "@radix-ui/themes";
 import { Link } from "react-router-dom";
 import Footer from "../components/Footer";
 import { featuresContent } from "../content";
+import { DeviceFrameset } from "react-device-frameset";
+import "react-device-frameset/styles/marvel-devices.min.css";
+import { toast } from "sonner";
 
 export default function Home() {
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    toast.success("Form submitted successfully!");
+  };
+
   return (
     <Flex align="center" justify="center" direction="column">
       <Flex
@@ -50,6 +58,73 @@ export default function Home() {
             </Flex>
           </Link>
         </Flex>
+      </Flex>
+      <Flex>
+        <DeviceFrameset device="iPhone X" zoom={0.7}>
+          <Flex
+            className="h-full w-full bg-gradient-to-r from-orange-400 to-orange-700"
+            align="center"
+            justify="center"
+          >
+            <form
+              className="mx-auto p-4 rounded w-full"
+              onSubmit={handleFormSubmit}
+            >
+              <Heading className="text-center mb-8">Contact us</Heading>
+              <div className="mb-4">
+                <label
+                  className="block text-gray-700 text-sm font-bold mb-2"
+                  htmlFor="name"
+                >
+                  Name
+                </label>
+                <input
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300 bg-white text-neutral-900"
+                  type="text"
+                  id="name"
+                  placeholder="Your name"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  className="block text-gray-700 text-sm font-bold mb-2"
+                  htmlFor="email"
+                >
+                  Email
+                </label>
+                <input
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300 bg-white text-neutral-900"
+                  type="email"
+                  id="email"
+                  placeholder="Your email"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  className="block text-gray-700 text-sm font-bold mb-2"
+                  htmlFor="message"
+                >
+                  Message
+                </label>
+                <textarea
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300 bg-white text-neutral-900"
+                  id="message"
+                  rows={4}
+                  placeholder="Your message"
+                  required
+                ></textarea>
+              </div>
+              <button
+                className="w-full bg-neutral-800 text-white py-2 rounded-md hover:bg-neutral-600 focus:outline-none transition-all"
+                type="submit"
+              >
+                Submit
+              </button>
+            </form>
+          </Flex>
+        </DeviceFrameset>
       </Flex>
       <Flex
         direction="column"
