@@ -32,25 +32,6 @@ export default function Home() {
           direction="column"
           className="relative"
         >
-<<<<<<< HEAD
-          HushHub is a seamless form submission solution that simplifies how
-          users interact with your website. Without the need for a backend
-          server, HushHub allows you to receive form submissions directly into
-          your inbox. It offers an intuitive and user-friendly experience,
-          helping you streamline communication and data collection for any
-          online project. Perfect for landing pages, portfolio sites, or
-          businesses that want fast and efficient form management without
-          complicated server setups.
-        </Text>
-        <Link to="/docs">
-          <Flex align="center" className="gap-1 hover:gap-4 transition-all">
-            <Text color="lime">Go to Documentation</Text>
-            <Text color="lime" size="7">
-              &rarr;
-            </Text>
-          </Flex>
-        </Link>
-=======
           <Text className="font-serif lg:text-6xl md:text-4xl text-2xl">
             Contact forms made easier
           </Text>
@@ -77,7 +58,6 @@ export default function Home() {
             </Flex>
           </Link>
         </Flex>
->>>>>>> main
       </Flex>
       <Flex>
         <DeviceFrameset device="iPhone X" zoom={0.7}>
