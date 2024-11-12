@@ -44,7 +44,7 @@ const CreateForm = () => {
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="bg-neutral-700 opacity-20 fixed inset-0" />
-        <Dialog.Content className="fixed top-[50%] left-[50%] max-h-[85vh] w-[90vw] max-w-[450px] translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-black p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none">
+        <Dialog.Content className="fixed top-[50%] left-[50%] max-h-[85vh] w-[90vw] max-w-[450px] translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-neutral-900 p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none">
           <Flex
             justify="center"
             direction="column"
@@ -53,14 +53,14 @@ const CreateForm = () => {
           >
             <Dialog.Title>Create new form</Dialog.Title>
             <Form.Root
-              className="w-full flex item-center justify-center flex-col gap-3"
+              className="w-full flex item-center justify-center flex-col gap-8"
               onSubmit={handleSubmit}
             >
               <Form.Field name="formName">
                 <Form.Control asChild>
                   <input
                     type="text"
-                    className="text-black bg-neutral-200 rounded px-2 py-1 border border-gray-300 w-full"
+                    className="rounded px-2 py-1 border border-gray-300 w-full text-md text-white"
                     required
                     placeholder="Enter name of the form"
                     value={formName}
@@ -71,7 +71,7 @@ const CreateForm = () => {
               <Form.Submit asChild>
                 <Flex justify="center" className="w-full">
                   <Button
-                    color="lime"
+                    color="orange"
                     className="rounded w-fit px-3 py-1 text-sm font-semibold"
                     loading={isFormLoading}
                   >
@@ -82,7 +82,7 @@ const CreateForm = () => {
             </Form.Root>
             <Dialog.Close asChild>
               <Button
-                className="absolute top-[10px] right-[10px] hover:bg-neutral-700 rounded-full p-1"
+                className="absolute top-[10px] right-[10px] hover:bg-neutral-700 rounded-full p-1 cursor-pointer"
                 aria-label="Close"
               >
                 <Cross2Icon />
