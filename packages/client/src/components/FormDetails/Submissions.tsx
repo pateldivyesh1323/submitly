@@ -133,19 +133,21 @@ export default function Submissions() {
         </Flex>
       ) : (
         <>
-          {formSubmissions.map((data, index) => (
-            <DataList.Root className="w-full" key={index}>
-              {Object.entries(data.response).map(([key, value]) => (
-                <DataList.Item key={key}>
-                  <DataList.Label minWidth="88px" className="capitalize">
-                    {key}
-                  </DataList.Label>
-                  <DataList.Value>{value as string}</DataList.Value>
-                </DataList.Item>
-              ))}
-              <DataList.Item className="bg-neutral-600 h-[0.1px]" />
-            </DataList.Root>
-          ))}
+          {formSubmissions.map(
+            (data: { response: unknown[] }, index: string) => (
+              <DataList.Root className="w-full" key={index}>
+                {Object.entries(data.response).map(([key, value]) => (
+                  <DataList.Item key={key}>
+                    <DataList.Label minWidth="88px" className="capitalize">
+                      {key}
+                    </DataList.Label>
+                    <DataList.Value>{value as string}</DataList.Value>
+                  </DataList.Item>
+                ))}
+                <DataList.Item className="bg-neutral-600 h-[0.1px]" />
+              </DataList.Root>
+            ),
+          )}
           <Flex justify="between" className="w-full">
             <Button
               color="blue"
