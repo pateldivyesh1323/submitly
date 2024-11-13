@@ -32,7 +32,7 @@ export default function Home() {
           className="relative w-[80vw]"
         >
           <Text className="font-doto lg:text-7xl md:text-4xl text-2xl font-extrabold">
-            FORM <Text color="orange">SUBMISSIONS</Text> MADE EASIER
+            FORM <Text color="blue">SUBMISSIONS</Text> MADE EASIER
           </Text>
           <Text color="gray" align="center" className="text-justify">
             Submitly is a seamless form submission solution that simplifies how
@@ -46,8 +46,8 @@ export default function Home() {
           </Text>
           <Link to="/docs">
             <Flex align="center" className="gap-1 hover:gap-4 transition-all">
-              <Text color="cyan">Go to Documentation</Text>
-              <Text color="cyan" size="7">
+              <Text color="blue">Go to Documentation</Text>
+              <Text color="blue" size="7">
                 &rarr;
               </Text>
             </Flex>
