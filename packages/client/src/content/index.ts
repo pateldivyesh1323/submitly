@@ -9,7 +9,7 @@ export const featuresContent = [
     icon: "/assets/icons/features/database.png",
     title: "No Backend Required",
     description:
-      "Submitly is a serverless solution, meaning you don't need to worry about setting up a backend server.",
+      "Hushhub is a serverless solution, meaning you don't need to worry about setting up a backend server.",
   },
   {
     icon: "/assets/icons/features/friends.png",
