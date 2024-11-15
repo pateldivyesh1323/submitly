@@ -120,6 +120,17 @@ export default function Home() {
             </form>
           </Flex>
         </DeviceFrameset>
+        <Flex justify="center" direction="column">
+          <Heading as="h3">Use Cases</Heading>
+          <ol className="list-disc">
+            <li>Portfolio Sites</li>
+            <li>Business Websites</li>
+            <li>Landing Pages</li>
+            <li>Personal Blogs</li>
+            <li>Online Stores</li>
+            and many more...
+          </ol>
+        </Flex>
       </Flex>
       <Flex
         direction="column"
