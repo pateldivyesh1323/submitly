@@ -24,7 +24,7 @@ export default function FormPage() {
         align="center"
         direction="column"
         justify="center"
-        className="mt-4 w-[90vw] mx-auto"
+        className="mt-4 w-[90vw] mx-auto pb-8"
         gap="8"
       >
         <Tabs.Root

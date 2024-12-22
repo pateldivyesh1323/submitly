@@ -11,7 +11,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { GET_FORM_SUBMISSIONS } from "../../lib/constants";
 import { getFormSubmissions } from "../../queries/form";
-import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import { MagnifyingGlassIcon, ReloadIcon } from "@radix-ui/react-icons";
+import { toast } from "sonner";
 
 export default function Submissions() {
   const navigate = useNavigate();
@@ -27,6 +28,7 @@ export default function Submissions() {
     data: formSubmissionsData,
     isLoading: formSubmissionsLoading,
     isError,
+    refetch,
   } = useQuery({
     queryKey: [
       GET_FORM_SUBMISSIONS,
@@ -76,33 +78,52 @@ export default function Submissions() {
     navigate(`${location.pathname}?${params.toString()}`);
   };
 
+  const handleReload = () => {
+    refetch();
+    toast.success("Submissions reloaded");
+  };
+
   const formSubmissions = formSubmissionsData?.data?.formSubmissions || [];
   const totalPages = formSubmissionsData?.data?.totalPages || 1;
 
   return (
     <Flex gap="6" direction="column">
       <Flex justify="between">
-        <form
-          onSubmit={handleSearchSubmit}
-          className="flex items-center gap-2 border border-neutral-500 rounded-md py-1 px-2"
-        >
-          <input
-            type="text"
-            className="rounded-md text-sm w-[200px] focus:w-[400px] transition-all outline-none pl-1"
-            placeholder="Search in submissions"
-            onChange={handleSearchChange}
-            value={keyword}
-          />
-          <button
-            type="submit"
-            className="bg-transparent border-none p-0"
+        <Flex gap="5" justify="between" align="center">
+          <form
+            onSubmit={handleSearchSubmit}
+            className="flex items-center gap-2 border border-neutral-500 rounded-md py-1 px-2"
+          >
+            <input
+              type="text"
+              className="rounded-md text-sm w-[200px] focus:w-[400px] transition-all outline-none pl-1"
+              placeholder="Search in submissions"
+              onChange={handleSearchChange}
+              value={keyword}
+            />
+            <button
+              type="submit"
+              className="bg-transparent border-none p-0"
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              title="Search"
+            >
+              <MagnifyingGlassIcon height="20" width="20" />
+            </button>
+          </form>
+          <Button
+            type="button"
+            variant="ghost"
+            color="gray"
+            className="cursor-pointer"
             data-bs-toggle="tooltip"
             data-bs-placement="top"
-            title="Search"
+            title="Refresh"
+            onClick={handleReload}
           >
-            <MagnifyingGlassIcon height="20" width="20" />
-          </button>
-        </form>
+            <ReloadIcon />
+          </Button>
+        </Flex>
         <Flex align="center" gap="2">
           <Text size="2">Sort by:</Text>
           <Select.Root defaultValue={sortBy} onValueChange={handleChangeSort}>
