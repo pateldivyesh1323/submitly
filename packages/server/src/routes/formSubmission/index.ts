@@ -3,6 +3,7 @@ import formSubmissionMiddleware from "../../middlewares/formSubmissionMiddleware
 import { AppResponse, BadRequestError } from "../../middlewares/error-handler";
 import {
   createFormSubmissionController,
+  deleteFormSubmissionController,
   getFormSubmissionsController,
 } from "../../controller/formSubmission";
 import authMiddleware from "../../middlewares/authMiddleware";
@@ -53,6 +54,22 @@ router.get("/:formId", authMiddleware, async (req, res, next) => {
       keyword,
     );
     return AppResponse(res, status, message, data);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.delete("/:formId", authMiddleware, async (req, res, next) => {
+  try {
+    const formId = req.params.formId;
+    const submissionIds = req.body.submissionIds;
+    const userId = req.headers["userId"] as string;
+    const { status, message } = await deleteFormSubmissionController({
+      submissionIds,
+      formId,
+      userId,
+    });
+    return AppResponse(res, status, message);
   } catch (error) {
     next(error);
   }

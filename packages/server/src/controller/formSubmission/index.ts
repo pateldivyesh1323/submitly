@@ -72,4 +72,30 @@ async function getFormSubmissionsController(
   };
 }
 
-export { createFormSubmissionController, getFormSubmissionsController };
+const deleteFormSubmissionController = async ({
+  formId,
+  submissionIds,
+  userId,
+}: any) => {
+  const form = await Form.findOne({ formId, userId });
+
+  if (!form) {
+    throw new BadRequestError("Form not found");
+  }
+
+  await FormSubmission.deleteMany({
+    formId,
+    _id: { $in: submissionIds },
+  });
+
+  return {
+    status: 200,
+    message: "Form submissions deleted successfully",
+  };
+};
+
+export {
+  createFormSubmissionController,
+  getFormSubmissionsController,
+  deleteFormSubmissionController,
+};
