@@ -6,7 +6,7 @@ const formApiKeySchema = new Schema(
   {
     key: {
       type: String,
-      default: () => crypto.randomBytes(64).toString("hex"),
+      default: () => crypto.randomBytes(32).toString("hex"),
       unique: true,
     },
     user: {

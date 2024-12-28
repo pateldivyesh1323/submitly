@@ -63,6 +63,7 @@ export default function Submissions() {
           searchTerm,
         ],
       });
+      setSelectedSubmissions([]);
     },
     onError: (error) => {
       toast.error(error.message);
@@ -260,7 +261,7 @@ export default function Submissions() {
             >
               Previous
             </Button>
-            <Text color="gray">
+            <Text color="gray" size="1">
               Page {currentPage} of {totalPages}
             </Text>
             <Button
