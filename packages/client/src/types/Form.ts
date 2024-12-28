@@ -10,3 +10,10 @@ export type AnalyticsChartDataType = {
   _id: string;
   submissionCount: number;
 };
+
+export type FormSubmissionType = {
+  _id: string;
+  response: Record<string, string>;
+};
+
+export type FormSubmissionsType = FormSubmissionType[];

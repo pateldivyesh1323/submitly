@@ -16,6 +16,7 @@ export const errorMiddleware = (
   next: NextFunction,
 ) => {
   console.error("Request", err.stack);
+  console.log(res);
   const statusCode: number = err.statusCode || 500;
   const message =
     statusCode === 500

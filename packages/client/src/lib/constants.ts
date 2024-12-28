@@ -10,3 +10,4 @@ export const GET_FORM_SUBMISSIONS = "getFormSubmissions";
 export const DELETE_FORM = "deleteForm";
 export const TOGGLE_FORM_ACTIVATION = "toggleFormActivation";
 export const FORM_ANALYTICS = "formAnalytics";
+export const DELETE_FORM_SUBMISSIONS = "deleteFormSubmissions";

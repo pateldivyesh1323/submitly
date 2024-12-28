@@ -21,7 +21,6 @@ export const getFormSubmissions = async (
   sortBy = "latest" as string,
   keyword = "" as string,
 ) => {
-  console.log("Hello");
   keyword = encodeURIComponent(keyword);
   const { data } = await apiClient.get(
     `/form/submit/${formId}?page=${page}&sort=${sortBy}&keyword=${keyword}`,
@@ -35,5 +34,18 @@ export const deleteForm = async (formId: string) => {
 
 export const toggleFormActivation = async (formId: string) => {
   const { data } = await apiClient.put(`/api/form/${formId}/toggleactivation`);
+  return data;
+};
+
+export const deleteFormSubmissions = async (
+  formId: string,
+  submissionIds: string[],
+) => {
+  if (submissionIds.length === 0) {
+    return;
+  }
+  const { data } = await apiClient.delete(`/form/submit/delete/${formId}`, {
+    data: { submissionIds },
+  });
   return data;
 };

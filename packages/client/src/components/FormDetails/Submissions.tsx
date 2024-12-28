@@ -1,18 +1,24 @@
 import React, { useState } from "react";
 import {
   Button,
+  Checkbox,
   DataList,
   Flex,
   Select,
   Spinner,
   Text,
 } from "@radix-ui/themes";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
-import { GET_FORM_SUBMISSIONS } from "../../lib/constants";
-import { getFormSubmissions } from "../../queries/form";
-import { MagnifyingGlassIcon, ReloadIcon } from "@radix-ui/react-icons";
+import {
+  DELETE_FORM_SUBMISSIONS,
+  GET_FORM_SUBMISSIONS,
+} from "../../lib/constants";
+import { deleteFormSubmissions, getFormSubmissions } from "../../queries/form";
 import { toast } from "sonner";
+import { FormSubmissionsType, FormSubmissionType } from "../../types/Form";
+import { queryClient } from "../../lib/apiClient";
+import { Search, RefreshCcw, Trash2 } from "lucide-react";
 
 export default function Submissions() {
   const navigate = useNavigate();
@@ -23,6 +29,7 @@ export default function Submissions() {
 
   const [keyword, setKeyword] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedSubmissions, setSelectedSubmissions] = useState<string[]>([]);
 
   const {
     data: formSubmissionsData,
@@ -39,6 +46,27 @@ export default function Submissions() {
     ],
     queryFn: () =>
       getFormSubmissions(params.id || "", currentPage, sortBy, searchTerm),
+  });
+
+  const { mutate: deleteSubmissionsMutation, isPending } = useMutation({
+    mutationKey: [DELETE_FORM_SUBMISSIONS, params.id],
+    mutationFn: () =>
+      deleteFormSubmissions(params.id || "", selectedSubmissions),
+    onSuccess: () => {
+      toast.success("Submissions deleted successfully");
+      queryClient.invalidateQueries({
+        queryKey: [
+          GET_FORM_SUBMISSIONS,
+          params.id,
+          currentPage,
+          sortBy,
+          searchTerm,
+        ],
+      });
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
   });
 
   const handleChangeSort = (value: string) => {
@@ -83,13 +111,48 @@ export default function Submissions() {
     toast.success("Submissions reloaded");
   };
 
-  const formSubmissions = formSubmissionsData?.data?.formSubmissions || [];
+  const handleCheckboxChange = (submissionId: string) => {
+    setSelectedSubmissions((prev) => {
+      if (prev.includes(submissionId)) {
+        return prev.filter((id) => id !== submissionId);
+      } else {
+        return [...prev, submissionId];
+      }
+    });
+  };
+
+  const handleSelectAll = () => {
+    if (selectedSubmissions.length === formSubmissions.length) {
+      setSelectedSubmissions([]);
+    } else {
+      setSelectedSubmissions(
+        formSubmissions.map((submission) => submission._id),
+      );
+    }
+  };
+
+  const handleDeleteSelectedSubmissions = () => {
+    deleteSubmissionsMutation();
+  };
+
+  const formSubmissions: FormSubmissionsType =
+    formSubmissionsData?.data?.formSubmissions || [];
   const totalPages = formSubmissionsData?.data?.totalPages || 1;
 
   return (
     <Flex gap="6" direction="column">
       <Flex justify="between">
         <Flex gap="5" justify="between" align="center">
+          <Checkbox
+            checked={
+              selectedSubmissions.length === formSubmissions.length &&
+              formSubmissions.length > 0
+            }
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+            title="Select all"
+            onCheckedChange={handleSelectAll}
+          />
           <form
             onSubmit={handleSearchSubmit}
             className="flex items-center gap-2 border border-neutral-500 rounded-md py-1 px-2"
@@ -108,7 +171,7 @@ export default function Submissions() {
               data-bs-placement="top"
               title="Search"
             >
-              <MagnifyingGlassIcon height="20" width="20" />
+              <Search size={17} />
             </button>
           </form>
           <Button
@@ -121,8 +184,22 @@ export default function Submissions() {
             title="Refresh"
             onClick={handleReload}
           >
-            <ReloadIcon />
+            <RefreshCcw size={17} />
           </Button>
+          {selectedSubmissions.length !== 0 && (
+            <Button
+              type="button"
+              variant="ghost"
+              className="cursor-pointer"
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              title="Delete Selected Submissions"
+              onClick={handleDeleteSelectedSubmissions}
+              disabled={isPending}
+            >
+              <Trash2 color="red" size={17} />
+            </Button>
+          )}
         </Flex>
         <Flex align="center" gap="2">
           <Text size="2">Sort by:</Text>
@@ -137,38 +214,43 @@ export default function Submissions() {
           </Select.Root>
         </Flex>
       </Flex>
-      {formSubmissionsLoading ? (
+      {formSubmissionsLoading || isPending ? (
         <Spinner />
       ) : isError ? (
         <Text>Error loading submissions.</Text>
       ) : formSubmissions.length === 0 ? (
         <Flex justify="center" align="center" gap="3">
-          <MagnifyingGlassIcon
-            height="20px"
-            width="20px"
-            className="stroke-neutral-400"
-          />
+          <Search height="20px" width="20px" className="stroke-neutral-400" />
           <Text className="font-extralight text-neutral-400">
             No Results found!
           </Text>
         </Flex>
       ) : (
         <>
-          {formSubmissions.map(
-            (data: { response: unknown[] }, index: string) => (
-              <DataList.Root className="w-full" key={index}>
+          {formSubmissions.map((data: FormSubmissionType) => (
+            <DataList.Root className="w-full" key={data._id}>
+              <Flex align="center" className="mr-4">
+                <Checkbox
+                  checked={selectedSubmissions.includes(data._id)}
+                  onCheckedChange={() => handleCheckboxChange(data._id)}
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  title="Select"
+                />
+              </Flex>
+              <Flex className="flex-col gap-2">
                 {Object.entries(data.response).map(([key, value]) => (
-                  <DataList.Item key={key}>
+                  <DataList.Item key={key} className="flex">
                     <DataList.Label minWidth="88px" className="capitalize">
                       {key}
                     </DataList.Label>
                     <DataList.Value>{value as string}</DataList.Value>
                   </DataList.Item>
                 ))}
-                <DataList.Item className="bg-neutral-600 h-[0.1px]" />
-              </DataList.Root>
-            ),
-          )}
+              </Flex>
+              <DataList.Item className="bg-neutral-600 h-[0.1px]" />
+            </DataList.Root>
+          ))}
           <Flex justify="between" className="w-full">
             <Button
               color="blue"

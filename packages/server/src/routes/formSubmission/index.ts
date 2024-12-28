@@ -59,7 +59,7 @@ router.get("/:formId", authMiddleware, async (req, res, next) => {
   }
 });
 
-router.delete("/:formId", authMiddleware, async (req, res, next) => {
+router.delete("/delete/:formId", authMiddleware, async (req, res, next) => {
   try {
     const formId = req.params.formId;
     const submissionIds = req.body.submissionIds;
