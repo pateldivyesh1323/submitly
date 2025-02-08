@@ -22,6 +22,12 @@ const formSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    webhook: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Webhook",
+      },
+    ],
   },
   {
     timestamps: true,

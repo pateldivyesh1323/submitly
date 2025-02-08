@@ -52,5 +52,5 @@ app.all("*", (req: Request, res: Response) => {
 app.use(errorMiddleware);
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port https://localhost:${PORT}`);
+  console.log(`🚀 Server is running on port https://localhost:${PORT}`);
 });
