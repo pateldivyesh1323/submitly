@@ -1,10 +1,11 @@
-import { Schema } from "mongoose";
+import { Types } from "mongoose";
 
 export interface FormType {
   name: string;
   formId: string;
-  userId: Schema.Types.ObjectId;
+  userId: Types.ObjectId;
   active: boolean;
+  webhook: Types.ObjectId[];
 }
 
 export interface FormWithDocType extends FormType, Document {

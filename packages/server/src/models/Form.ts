@@ -26,6 +26,7 @@ const formSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Webhook",
+        default: [],
       },
     ],
   },

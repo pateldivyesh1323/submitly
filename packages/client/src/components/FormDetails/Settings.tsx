@@ -7,7 +7,6 @@ import {
   TrashIcon,
 } from "@radix-ui/react-icons";
 import {
-  Button,
   Code,
   Flex,
   IconButton,
@@ -15,6 +14,7 @@ import {
   Switch,
   Text,
 } from "@radix-ui/themes";
+import { Button } from "@/components/ui/button";
 import {
   DELETE_FORM,
   GET_FORM_INFO,
@@ -32,13 +32,16 @@ import { useEffect, useState } from "react";
 import { getErrorMessage } from "../../lib/error";
 import { queryClient } from "../../lib/apiClient";
 import { Settings as SettingsIcon, Link as LinkIcon } from "lucide-react";
+import { WebhookType } from "@/types/Form";
+import AddWebhookDialog from "./Webhook/AddWebhookDialog";
 
 export default function Settings() {
   const params = useParams();
   const navigate = useNavigate();
 
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [webhooks, setWebhooks] = useState<any[]>([]);
+  const [webhooks, setWebhooks] = useState<WebhookType[]>([]);
+  const [isWebhookDrawerOpen, setIsWebhookDrawerOpen] = useState(false);
 
   const { data: formInfoData, isLoading: formInfoLoading } = useQuery({
     queryKey: [GET_FORM_INFO, params.id],
@@ -84,10 +87,6 @@ export default function Settings() {
   const handleFormDelete = () => {
     deleteMutation();
     setIsFormOpen(false);
-  };
-
-  const handleAddWebhook = () => {
-    toast.success("Add webhook clicked (not implemented)");
   };
 
   const handleEditWebhook = (id: string) => {
@@ -197,7 +196,7 @@ export default function Settings() {
         {webhooks.length > 0 ? (
           webhooks.map((wh) => (
             <Flex
-              key={wh.id}
+              key={wh._id}
               align="center"
               justify="between"
               className="border-b border-neutral-800 last:border-b-0 py-2"
@@ -208,13 +207,13 @@ export default function Settings() {
               <Flex gap="2">
                 <IconButton
                   aria-label="Edit Webhook"
-                  onClick={() => handleEditWebhook(wh.id)}
+                  onClick={() => handleEditWebhook(wh._id)}
                 >
                   <Pencil1Icon />
                 </IconButton>
                 <IconButton
                   aria-label="Delete Webhook"
-                  onClick={() => handleDeleteWebhook(wh.id)}
+                  onClick={() => handleDeleteWebhook(wh._id)}
                 >
                   <TrashIcon />
                 </IconButton>
@@ -222,12 +221,19 @@ export default function Settings() {
             </Flex>
           ))
         ) : (
-          <Text className="text-neutral-200">No webhooks configured.</Text>
+          <Text className="text-neutral-200 text-sm">
+            No webhooks configured.
+          </Text>
         )}
-        <Flex justify="end" className="mt-3">
-          <IconButton aria-label="Add Webhook" onClick={handleAddWebhook}>
+
+        <Flex className="mt-3">
+          <Button
+            variant="outline"
+            onClick={() => setIsWebhookDrawerOpen(true)}
+          >
             <PlusCircledIcon />
-          </IconButton>
+            Add Webhook
+          </Button>
         </Flex>
       </div>
       <div className="p-4 border border-red-800 rounded-md bg-neutral-900 flex flex-col gap-2">
@@ -239,10 +245,15 @@ export default function Settings() {
         </Text>
         <Dialog.Root open={isFormOpen} onOpenChange={setIsFormOpen}>
           <Dialog.Trigger asChild>
-            <Button color="red" variant="soft" className="cursor-pointer w-fit">
+            <Button
+              color="red"
+              variant="destructive"
+              className="cursor-pointer w-fit"
+            >
               Delete this form
             </Button>
           </Dialog.Trigger>
+
           <Dialog.Portal>
             <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-50" />
             <Dialog.Content className="fixed top-[50%] left-[50%] w-[90vw] max-w-md transform -translate-x-1/2 -translate-y-1/2 bg-neutral-900 p-6 rounded-lg shadow-lg border border-neutral-800">
@@ -256,7 +267,7 @@ export default function Settings() {
               <div className="mt-4 flex justify-end space-x-4">
                 <Dialog.Close asChild>
                   <Button
-                    variant="soft"
+                    variant="outline"
                     className="bg-neutral-800 hover:bg-neutral-700 transition-all duration-200"
                   >
                     Cancel
@@ -264,7 +275,7 @@ export default function Settings() {
                 </Dialog.Close>
                 <Button
                   color="red"
-                  variant="solid"
+                  variant="destructive"
                   onClick={handleFormDelete}
                   className="hover:bg-red-600 transition-all duration-200"
                 >
@@ -280,6 +291,11 @@ export default function Settings() {
           </Dialog.Portal>
         </Dialog.Root>
       </div>
+      <AddWebhookDialog
+        isOpen={isWebhookDrawerOpen}
+        onOpenChange={setIsWebhookDrawerOpen}
+        formId={formInfoData?.data?.formId || ""}
+      />
     </Flex>
   );
 }

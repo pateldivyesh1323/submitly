@@ -17,3 +17,15 @@ export type FormSubmissionType = {
 };
 
 export type FormSubmissionsType = FormSubmissionType[];
+
+export type WebhookType = {
+  _id: string;
+  title: string;
+  url: string;
+  form: FormType;
+  method: "GET" | "POST";
+  active: boolean;
+  secret: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
