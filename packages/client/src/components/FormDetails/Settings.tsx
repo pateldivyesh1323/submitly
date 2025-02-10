@@ -17,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import {
   DELETE_FORM,
+  DELETE_WEBHOOK,
   GET_FORM_INFO,
   TOGGLE_FORM_ACTIVATION,
 } from "../../lib/constants";
@@ -32,16 +33,20 @@ import { useEffect, useState } from "react";
 import { getErrorMessage } from "../../lib/error";
 import { queryClient } from "../../lib/apiClient";
 import { Settings as SettingsIcon, Link as LinkIcon } from "lucide-react";
-import { WebhookType } from "@/types/Form";
 import AddWebhookDialog from "./Webhook/AddWebhookDialog";
+import { WebhookType } from "@/types/Form";
+import { Badge } from "@/components/ui/badge";
+import { deleteWebhook } from "@/queries/webhook";
 
 export default function Settings() {
   const params = useParams();
   const navigate = useNavigate();
 
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [webhooks, setWebhooks] = useState<WebhookType[]>([]);
   const [isWebhookDrawerOpen, setIsWebhookDrawerOpen] = useState(false);
+  const [webhookMode, setWebhookMode] = useState<"add" | "edit">("add");
+  const [webhookInitialData, setWebhookInitialData] =
+    useState<WebhookType | null>(null);
 
   const { data: formInfoData, isLoading: formInfoLoading } = useQuery({
     queryKey: [GET_FORM_INFO, params.id],
@@ -75,6 +80,20 @@ export default function Settings() {
     },
   });
 
+  const { mutate: deleteWebhookMutation } = useMutation({
+    mutationKey: [DELETE_WEBHOOK, params.id],
+    mutationFn: (webhookId: string) => deleteWebhook(webhookId),
+    onSuccess: () => {
+      toast.success("Webhook deleted successfully");
+      queryClient.invalidateQueries({
+        queryKey: [GET_FORM_INFO, params.id],
+      });
+    },
+    onError: (error) => {
+      toast.error(getErrorMessage(error));
+    },
+  });
+
   const handleToggleMutation = () => {
     toggleFormActivationMutation();
   };
@@ -89,19 +108,18 @@ export default function Settings() {
     setIsFormOpen(false);
   };
 
-  const handleEditWebhook = (id: string) => {
-    toast.success(`Edit webhook clicked for id: ${id} (not implemented)`);
-  };
-
   const handleDeleteWebhook = (id: string) => {
-    toast.success(`Delete webhook clicked for id: ${id} (not implemented)`);
+    deleteWebhookMutation(id);
   };
 
   useEffect(() => {
-    if (formInfoData?.data?.webhook) {
-      setWebhooks(formInfoData.data.webhook);
+    if (isWebhookDrawerOpen === false) {
+      setWebhookInitialData(null);
+      setWebhookMode("add");
     }
-  }, [formInfoData]);
+  }, [isWebhookDrawerOpen]);
+
+  const webhooks: WebhookType[] = formInfoData?.data?.webhook || [];
 
   return (
     <Flex direction="column" gap="6" className="w-full max-w-3xl mx-auto p-6">
@@ -201,16 +219,29 @@ export default function Settings() {
               justify="between"
               className="border-b border-neutral-800 last:border-b-0 py-2"
             >
-              <Code variant="ghost" className="text-neutral-200">
-                {wh.url}
+              <Code
+                variant="ghost"
+                className="text-neutral-200 flex items-center gap-2"
+              >
+                <div
+                  className={`w-2 h-2 rounded-full ${
+                    wh.active ? "bg-green-500" : "bg-red-500"
+                  }`}
+                />
+                {wh.title} - {wh.url} <Badge>{wh.method}</Badge>
               </Code>
               <Flex gap="2">
                 <IconButton
                   aria-label="Edit Webhook"
-                  onClick={() => handleEditWebhook(wh._id)}
+                  onClick={() => {
+                    setWebhookMode("edit");
+                    setWebhookInitialData(wh);
+                    setIsWebhookDrawerOpen(true);
+                  }}
                 >
                   <Pencil1Icon />
                 </IconButton>
+
                 <IconButton
                   aria-label="Delete Webhook"
                   onClick={() => handleDeleteWebhook(wh._id)}
@@ -225,11 +256,14 @@ export default function Settings() {
             No webhooks configured.
           </Text>
         )}
-
         <Flex className="mt-3">
           <Button
             variant="outline"
-            onClick={() => setIsWebhookDrawerOpen(true)}
+            onClick={() => {
+              setWebhookMode("add");
+              setWebhookInitialData(null);
+              setIsWebhookDrawerOpen(true);
+            }}
           >
             <PlusCircledIcon />
             Add Webhook
@@ -295,6 +329,8 @@ export default function Settings() {
         isOpen={isWebhookDrawerOpen}
         onOpenChange={setIsWebhookDrawerOpen}
         formId={formInfoData?.data?.formId || ""}
+        mode={webhookMode}
+        webhookInitialData={webhookInitialData}
       />
     </Flex>
   );

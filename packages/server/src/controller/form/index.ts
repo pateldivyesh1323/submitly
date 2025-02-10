@@ -31,7 +31,7 @@ const getFormController = async ({
   if (!formId) {
     throw new BadRequestError("Form id is required");
   }
-  const form = await Form.findOne({ formId, userId });
+  const form = await Form.findOne({ formId, userId }).populate("webhook");
   if (!form) {
     throw new BadRequestError("Form not found");
   }

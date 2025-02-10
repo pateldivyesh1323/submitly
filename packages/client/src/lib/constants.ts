@@ -11,3 +11,6 @@ export const DELETE_FORM = "deleteForm";
 export const TOGGLE_FORM_ACTIVATION = "toggleFormActivation";
 export const FORM_ANALYTICS = "formAnalytics";
 export const DELETE_FORM_SUBMISSIONS = "deleteFormSubmissions";
+export const CREATE_WEBHOOK = "createWebhook";
+export const DELETE_WEBHOOK = "deleteWebhook";
+export const UPDATE_WEBHOOK = "updateWebhook";
