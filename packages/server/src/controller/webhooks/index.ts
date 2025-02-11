@@ -1,10 +1,8 @@
-import mongoose from "mongoose";
-import {
-  BadRequestError,
-  UnauthorizedError,
-} from "../../middlewares/error-handler";
+import axios from "axios";
+import { BadRequestError } from "../../middlewares/error-handler";
 import Form from "../../models/Form";
 import Webhook from "../../models/Webhook";
+import mongoose from "mongoose";
 
 async function createWebhookController({
   userId,
@@ -13,8 +11,8 @@ async function createWebhookController({
   userId: string;
   data: any;
 }) {
-  const { title, formId, url, method, secret, active } = data;
-  if (!title || !formId || !url || !method) {
+  const { title, formId, url, method, secret, active, type } = data;
+  if (!title || !formId || !url || !method || !type) {
     throw new BadRequestError("All fields are required");
   }
 
@@ -35,6 +33,7 @@ async function createWebhookController({
     method,
     active,
     secret,
+    type,
   });
 
   if (!form.webhook) {
@@ -58,8 +57,8 @@ const updateWebhookController = async ({
   userId: string;
   data: any;
 }) => {
-  const { title, formId, url, method, secret, active, webhookId } = data;
-  if (!title || !url || !method || !webhookId) {
+  const { title, formId, url, method, secret, active, webhookId, type } = data;
+  if (!title || !url || !method || !webhookId || !type) {
     throw new BadRequestError("All fields are required");
   }
 
@@ -84,6 +83,7 @@ const updateWebhookController = async ({
   webhook.method = method;
   webhook.secret = secret;
   webhook.active = active;
+  webhook.type = type;
   await webhook.save();
 
   return {
@@ -131,8 +131,53 @@ const deleteWebhookController = async ({
   };
 };
 
+const callWebhooksController = async ({
+  formId,
+  formSubmission,
+  webhookType,
+  formDocumentId,
+}: {
+  webhookType: string;
+  formId: string;
+  formDocumentId: mongoose.Types.ObjectId;
+  formSubmission: any;
+}) => {
+  const webhooks = await Webhook.find({
+    form: formDocumentId,
+    type: webhookType,
+  });
+
+  if (webhooks.length === 0) {
+    return;
+  }
+  for (const webhook of webhooks) {
+    const { url, method, secret, active } = webhook;
+    if (!active) {
+      continue;
+    }
+    try {
+      await axios({
+        url,
+        method,
+        data: {
+          type: webhookType,
+          formId,
+          data: formSubmission,
+        },
+        headers: {
+          "Content-Type": "application/json",
+          "submitly-webhook-secret": secret,
+        },
+      });
+    } catch (error) {
+      continue;
+    }
+  }
+};
+
 export {
   createWebhookController,
   updateWebhookController,
   deleteWebhookController,
+  callWebhooksController,
 };

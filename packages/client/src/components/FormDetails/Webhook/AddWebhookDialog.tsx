@@ -39,6 +39,9 @@ export default function AddWebhookDialog({
   const [method, setMethod] = useState<"GET" | "POST">("POST");
   const [secret, setSecret] = useState("");
   const [active, setActive] = useState(false);
+  const [type, setType] = useState<"form.submission.created">(
+    "form.submission.created",
+  );
 
   useEffect(() => {
     if (webhookInitialData) {
@@ -47,6 +50,7 @@ export default function AddWebhookDialog({
       setMethod(webhookInitialData.method);
       setSecret(webhookInitialData.secret || "");
       setActive(webhookInitialData.active);
+      setType(webhookInitialData.type);
     }
   }, [webhookInitialData]);
 
@@ -102,6 +106,7 @@ export default function AddWebhookDialog({
         secret,
         formId,
         active,
+        type,
       });
     } else {
       if (!title || !url || !method) {
@@ -113,6 +118,7 @@ export default function AddWebhookDialog({
         method,
         secret,
         active,
+        type,
         webhookId: webhookInitialData?._id || "",
       });
     }
@@ -188,6 +194,26 @@ export default function AddWebhookDialog({
               </Form.Control>
             </Form.Field>
 
+            <Form.Field name="type">
+              <Form.Label className="text-sm font-medium text-neutral-200">
+                Type
+              </Form.Label>
+              <Form.Control asChild>
+                <select
+                  className="mt-1.5 w-full rounded-md bg-neutral-800 p-2.5 text-sm text-neutral-200 border border-neutral-700 focus:border-neutral-600 focus:outline-none"
+                  onChange={(e) =>
+                    setType(e.target.value as "form.submission.created")
+                  }
+                  defaultValue={type}
+                  required
+                >
+                  <option value="form.submission.created">
+                    Form Submission Created (form.submission.created)
+                  </option>
+                </select>
+              </Form.Control>
+            </Form.Field>
+
             <Form.Field name="secret">
               <Form.Label className="text-sm font-medium text-neutral-200">
                 Secret (Optional)
@@ -201,6 +227,10 @@ export default function AddWebhookDialog({
                   onChange={(e) => setSecret(e.target.value)}
                 />
               </Form.Control>
+              <Form.Message className="text-sm text-neutral-400">
+                Your server can verify webhook authenticity by checking the
+                "submitly-webhook-secret" header
+              </Form.Message>
             </Form.Field>
 
             <Form.Field name="active" className="flex items-center gap-2">

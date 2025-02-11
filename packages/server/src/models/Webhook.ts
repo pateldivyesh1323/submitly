@@ -6,6 +6,11 @@ const webhookSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    type: {
+      type: String,
+      required: true,
+      enum: ["form.submission.created"],
+    },
     form: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Form",

@@ -1,11 +1,21 @@
 import { BadRequestError } from "../../middlewares/error-handler";
 import Form from "../../models/Form";
 import { FormSubmission } from "../../models/FormSubmissionModel";
-
+import { callWebhooksController } from "../webhooks";
 const limit = 10;
 
 async function createFormSubmissionController({ formId, data }: any) {
+  let form = await Form.findOne({ formId });
+  if (!form) {
+    throw new BadRequestError("Form not found");
+  }
   let formSubmission = await FormSubmission.create({ formId, response: data });
+  callWebhooksController({
+    webhookType: "form.submission.created",
+    formDocumentId: form._id,
+    formId: form.formId,
+    formSubmission: data,
+  });
   return {
     status: 200,
     message: "Form submitted successfully",

@@ -145,6 +145,9 @@ importers:
       '@types/uuid':
         specifier: ^10.0.0
         version: 10.0.0
+      axios:
+        specifier: ^1.7.7
+        version: 1.7.7
       bcryptjs:
         specifier: ^2.4.3
         version: 2.4.3

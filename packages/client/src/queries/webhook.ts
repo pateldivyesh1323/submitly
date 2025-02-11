@@ -7,6 +7,7 @@ type CreateWebhookProps = {
   secret: string;
   formId: string;
   active: boolean;
+  type: "form.submission.created";
 };
 
 const createWebhook = async (webhook: CreateWebhookProps) => {

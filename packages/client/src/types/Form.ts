@@ -28,4 +28,5 @@ export type WebhookType = {
   secret: string;
   createdAt: Date;
   updatedAt: Date;
+  type: "form.submission.created";
 };
