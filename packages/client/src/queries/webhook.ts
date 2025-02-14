@@ -4,7 +4,7 @@ type CreateWebhookProps = {
   title: string;
   url: string;
   method: "GET" | "POST";
-  secret: string;
+  secret?: string;
   formId: string;
   active: boolean;
   type: "form.submission.created";

@@ -19,7 +19,7 @@ connectDB();
 // Form Rate Limiter
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10, // Maximum 10 requests per IP address
+  max: 200, // Maximum 200 requests per IP address
   message: async (req: any, res: any) => {
     res.status(429).json({
       message: "Too many requests. Please try again later",
