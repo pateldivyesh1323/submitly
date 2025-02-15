@@ -9,7 +9,9 @@ import formSubmissionRoute from "./routes/formSubmission";
 import { errorMiddleware } from "./middlewares/error-handler";
 import connectDB from "./lib/db";
 import rateLimit from "express-rate-limit";
-import webhookRoute from "./routes/webhooks";
+import webhookRoute from "./routes/formWebhooks";
+import formEmailRoute from "./routes/formEmails";
+
 const app = express();
 const PORT = environments.PORT;
 
@@ -38,6 +40,7 @@ app.use("/api/user/auth", userAuthenticationRoute);
 app.use("/api/formApikey", apiKeyRoute);
 app.use("/api/form/analytics", formAnalyticsRoute);
 app.use("/api/form/webhooks", webhookRoute);
+app.use("/api/form/emails", formEmailRoute);
 app.use("/api/form", formRoute);
 app.get("/", (req: Request, res: Response) => {
   res.status(200).json({ message: "Server status good" });

@@ -1,3 +1,5 @@
+import { sendEmail } from "../../mails";
+import formSubmissionTemplate from "../../mails/templates/formSubmissionTemplate";
 import { BadRequestError } from "../../middlewares/error-handler";
 import Form from "../../models/Form";
 import { FormSubmission } from "../../models/FormSubmissionModel";
@@ -10,12 +12,28 @@ async function createFormSubmissionController({ formId, data }: any) {
     throw new BadRequestError("Form not found");
   }
   let formSubmission = await FormSubmission.create({ formId, response: data });
+
+  // Call webhooks
   callWebhooksController({
     webhookType: "form.submission.created",
     formDocumentId: form._id,
     formId: form.formId,
     formSubmission: data,
   });
+
+  // Send emails
+  if (form.email.length > 0) {
+    const emailHtml = formSubmissionTemplate(form.name, form.URL, data);
+    const emailAddresses = form.email
+      .filter((email) => email.active == true)
+      .map((email) => email.address);
+    await sendEmail({
+      to: emailAddresses,
+      subject: "Form Submission",
+      html: emailHtml,
+    });
+  }
+
   return {
     status: 200,
     message: "Form submitted successfully",

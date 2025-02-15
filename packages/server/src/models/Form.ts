@@ -22,6 +22,18 @@ const formSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    email: [
+      {
+        address: {
+          type: String,
+          required: true,
+        },
+        active: {
+          type: Boolean,
+          default: true,
+        },
+      },
+    ],
     webhook: [
       {
         type: mongoose.Schema.Types.ObjectId,
