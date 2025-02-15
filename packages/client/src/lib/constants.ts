@@ -14,3 +14,4 @@ export const DELETE_FORM_SUBMISSIONS = "deleteFormSubmissions";
 export const CREATE_WEBHOOK = "createWebhook";
 export const DELETE_WEBHOOK = "deleteWebhook";
 export const UPDATE_WEBHOOK = "updateWebhook";
+export const UPDATE_FORM_EMAIL = "updateFormEmail";

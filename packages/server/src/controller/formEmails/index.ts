@@ -11,7 +11,7 @@ const updateFormEmailController = async ({
   data: any;
   userId: string;
 }) => {
-  const { formId, emails } = data;
+  const { formId, email } = data;
 
   if (!formId) {
     throw new BadRequestError("Form ID is required");
@@ -22,7 +22,7 @@ const updateFormEmailController = async ({
     throw new NotFoundError("Form not found");
   }
 
-  form.email = emails;
+  form.email = email;
   await form.save();
 
   return {

@@ -20,6 +20,7 @@ import {
   DELETE_WEBHOOK,
   GET_FORM_INFO,
   TOGGLE_FORM_ACTIVATION,
+  UPDATE_FORM_EMAIL,
 } from "../../lib/constants";
 import {
   deleteForm,
@@ -32,11 +33,17 @@ import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { getErrorMessage } from "../../lib/error";
 import { queryClient } from "../../lib/apiClient";
-import { Settings as SettingsIcon, Link as LinkIcon } from "lucide-react";
+import {
+  Settings as SettingsIcon,
+  Link as LinkIcon,
+  Mail as MailIcon,
+} from "lucide-react";
 import AddWebhookDialog from "./Webhook/AddWebhookDialog";
 import { WebhookType } from "@/types/Form";
 import { Badge } from "@/components/ui/badge";
 import { deleteWebhook } from "@/queries/webhook";
+import { updateFormEmail } from "@/queries/formEmail";
+import AddEmailDialog from "./FormEmail/AddEmailDialog";
 
 export default function Settings() {
   const params = useParams();
@@ -47,6 +54,18 @@ export default function Settings() {
   const [webhookMode, setWebhookMode] = useState<"add" | "edit">("add");
   const [webhookInitialData, setWebhookInitialData] =
     useState<WebhookType | null>(null);
+  const [emails, setEmails] = useState<
+    {
+      address: string;
+      active: boolean;
+    }[]
+  >([]);
+  const [isEmailDialogOpen, setIsEmailDialogOpen] = useState(false);
+  const [emailMode, setEmailMode] = useState<"add" | "edit">("add");
+  const [emailInitialData, setEmailInitialData] = useState<{
+    address: string;
+    active: boolean;
+  } | null>(null);
 
   const { data: formInfoData, isLoading: formInfoLoading } = useQuery({
     queryKey: [GET_FORM_INFO, params.id],
@@ -94,6 +113,21 @@ export default function Settings() {
     },
   });
 
+  const { mutate: updateEmailMutation } = useMutation({
+    mutationKey: [UPDATE_FORM_EMAIL, params.id],
+    mutationFn: () => updateFormEmail(params.id || "", emails),
+    onSuccess: () => {
+      toast.success("Emails updated successfully");
+      queryClient.invalidateQueries({
+        queryKey: [GET_FORM_INFO, params.id],
+        exact: true,
+      });
+    },
+    onError: (error) => {
+      toast.error(getErrorMessage(error));
+    },
+  });
+
   const handleToggleMutation = () => {
     toggleFormActivationMutation();
   };
@@ -112,12 +146,22 @@ export default function Settings() {
     deleteWebhookMutation(id);
   };
 
+  const handleEmailUpdate = () => {
+    updateEmailMutation();
+  };
+
   useEffect(() => {
     if (isWebhookDrawerOpen === false) {
       setWebhookInitialData(null);
       setWebhookMode("add");
     }
   }, [isWebhookDrawerOpen]);
+
+  useEffect(() => {
+    if (formInfoData?.data?.email) {
+      setEmails(formInfoData?.data?.email || []);
+    }
+  }, [formInfoData]);
 
   const webhooks: WebhookType[] = formInfoData?.data?.webhook || [];
 
@@ -199,6 +243,80 @@ export default function Settings() {
           )}
         </Flex>
       </Flex>
+
+      <div className="p-4 border border-neutral-800 rounded-md shadow-sm bg-neutral-900">
+        <Text
+          size="2"
+          weight="bold"
+          className="text-neutral-200 mb-3 flex items-center gap-2"
+        >
+          <MailIcon className="w-4 h-4" />
+          Email Settings
+        </Text>
+
+        {emails.length > 0 ? (
+          emails.map((email, index) => (
+            <Flex
+              key={index}
+              align="center"
+              justify="between"
+              className="border-b border-neutral-800 last:border-b-0 py-2"
+            >
+              <Code
+                variant="ghost"
+                className="text-neutral-200 flex items-center gap-2"
+              >
+                <div
+                  className={`w-2 h-2 rounded-full ${
+                    email.active ? "bg-green-500" : "bg-red-500"
+                  }`}
+                />
+                {email.address}
+              </Code>
+              <Flex gap="2">
+                <IconButton
+                  aria-label="Edit Email"
+                  onClick={() => {
+                    setEmailMode("edit");
+                    setEmailInitialData(email);
+                    setIsEmailDialogOpen(true);
+                  }}
+                >
+                  <Pencil1Icon />
+                </IconButton>
+                <IconButton
+                  aria-label="Delete Email"
+                  onClick={() => {
+                    const newEmails = [...emails];
+                    newEmails.splice(index, 1);
+                    setEmails(newEmails);
+                    handleEmailUpdate();
+                  }}
+                >
+                  <TrashIcon />
+                </IconButton>
+              </Flex>
+            </Flex>
+          ))
+        ) : (
+          <Text className="text-neutral-200 text-sm">
+            No email notifications configured.
+          </Text>
+        )}
+        <Flex className="mt-3">
+          <Button
+            variant="outline"
+            onClick={() => {
+              setEmailMode("add");
+              setEmailInitialData(null);
+              setIsEmailDialogOpen(true);
+            }}
+          >
+            <PlusCircledIcon />
+            Add Email
+          </Button>
+        </Flex>
+      </div>
 
       {/* Webhooks Section */}
       <div className="p-4 border border-neutral-800 rounded-md shadow-sm bg-neutral-900">
@@ -331,6 +449,29 @@ export default function Settings() {
         formId={formInfoData?.data?.formId || ""}
         mode={webhookMode}
         webhookInitialData={webhookInitialData}
+      />
+      <AddEmailDialog
+        isOpen={isEmailDialogOpen}
+        onOpenChange={setIsEmailDialogOpen}
+        mode={emailMode}
+        emailInitialData={emailInitialData}
+        isLoading={false}
+        onSubmit={(emailData) => {
+          if (emailMode === "add") {
+            setEmails([...emails, emailData]);
+          } else {
+            const newEmails = [...emails];
+            const index = newEmails.findIndex(
+              (e) => e.address === emailInitialData?.address,
+            );
+            if (index !== -1) {
+              newEmails[index] = emailData;
+              setEmails(newEmails);
+            }
+          }
+          handleEmailUpdate();
+          setIsEmailDialogOpen(false);
+        }}
       />
     </Flex>
   );
