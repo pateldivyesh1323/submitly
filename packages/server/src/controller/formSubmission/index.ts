@@ -18,18 +18,24 @@ async function createFormSubmissionController({ formId, data }: any) {
     webhookType: "form.submission.created",
     formDocumentId: form._id,
     formId: form.formId,
+    formName: form.name,
     formSubmission: data,
   });
 
   // Send emails
   if (form.email.length > 0) {
-    const emailHtml = formSubmissionTemplate(form.name, form.URL, data);
+    const emailHtml = formSubmissionTemplate({
+      formName: form.name,
+      formId: form.formId,
+      submissionData: data,
+    });
     const emailAddresses = form.email
       .filter((email) => email.active == true)
       .map((email) => email.address);
+
     await sendEmail({
       to: emailAddresses,
-      subject: "Form Submission",
+      subject: `Submitly: ${form.name} - Form Submission`,
       html: emailHtml,
     });
   }

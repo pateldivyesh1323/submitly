@@ -133,12 +133,14 @@ const deleteWebhookController = async ({
 
 const callWebhooksController = async ({
   formId,
+  formName,
   formSubmission,
   webhookType,
   formDocumentId,
 }: {
   webhookType: string;
   formId: string;
+  formName: string;
   formDocumentId: mongoose.Types.ObjectId;
   formSubmission: any;
 }) => {
@@ -162,6 +164,7 @@ const callWebhooksController = async ({
         data: {
           type: webhookType,
           formId,
+          formName,
           data: formSubmission,
         },
         headers: {
