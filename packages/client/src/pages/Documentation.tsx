@@ -37,7 +37,7 @@ const pythonCode = `import requests
 import json
 
 def submit_form(data):
-    url = f"{environments['VITE_SERVER_URL']}/form/submit"
+    url = f"${environments.VITE_SERVER_URL}/form/submit"
     headers = {
         "Content-Type": "application/json",
         "form-id": "your-form-id",  # Replace with your form ID
@@ -63,7 +63,7 @@ import (
 )
 
 func submitForm(data map[string]string) error {
-	url := fmt.Sprintf("%s/form/submit", "your-server-url") // Replace with your actual server URL
+	url := fmt.Sprintf("%s/form/submit", "${environments.VITE_SERVER_URL}") // Replace with your actual server URL
 	jsonData, err := json.Marshal(data)
 	if err != nil {
 		return err
