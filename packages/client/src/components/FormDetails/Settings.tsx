@@ -24,6 +24,7 @@ import {
 } from "../../lib/constants";
 import {
   deleteForm,
+  downloadFormSubmissionsCSV,
   getFormInfo,
   toggleFormActivation,
 } from "../../queries/form";
@@ -37,6 +38,7 @@ import {
   Settings as SettingsIcon,
   Link as LinkIcon,
   Mail as MailIcon,
+  Download,
 } from "lucide-react";
 import AddWebhookDialog from "./Webhook/AddWebhookDialog";
 import { WebhookType } from "@/types/Form";
@@ -243,6 +245,28 @@ export default function Settings() {
           )}
         </Flex>
       </Flex>
+
+      <div className="p-4 border border-neutral-800 rounded-md shadow-sm bg-neutral-900">
+        <Text
+          size="2"
+          weight="bold"
+          className="text-neutral-200 mb-3 flex items-center gap-2"
+        >
+          <Download className="w-4 h-4" />
+          Export Data
+        </Text>
+        <Text className="text-neutral-400 mb-4">
+          Download all form submissions as a CSV file.
+        </Text>
+        <Button
+          variant="outline"
+          onClick={() => downloadFormSubmissionsCSV(params.id || "")}
+          className="flex items-center gap-2"
+        >
+          <Download className="w-3.5 h-3.5" />
+          Download CSV
+        </Button>
+      </div>
 
       <div className="p-4 border border-neutral-800 rounded-md shadow-sm bg-neutral-900">
         <Text

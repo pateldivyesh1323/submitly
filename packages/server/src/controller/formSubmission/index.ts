@@ -4,6 +4,10 @@ import { BadRequestError } from "../../middlewares/error-handler";
 import Form from "../../models/Form";
 import { FormSubmission } from "../../models/FormSubmissionModel";
 import { callWebhooksController } from "../webhooks";
+import { Response } from "express";
+import { Transform } from "stream";
+import { format } from "fast-csv";
+
 const limit = 10;
 
 async function createFormSubmissionController({ formId, data }: any) {
@@ -13,7 +17,6 @@ async function createFormSubmissionController({ formId, data }: any) {
   }
   let formSubmission = await FormSubmission.create({ formId, response: data });
 
-  // Call webhooks
   callWebhooksController({
     webhookType: "form.submission.created",
     formDocumentId: form._id,
@@ -22,7 +25,6 @@ async function createFormSubmissionController({ formId, data }: any) {
     formSubmission: data,
   });
 
-  // Send emails
   if (form.email.length > 0) {
     const emailHtml = formSubmissionTemplate({
       formName: form.name,
@@ -128,8 +130,71 @@ const deleteFormSubmissionController = async ({
   };
 };
 
+async function downloadFormSubmissionsCSVController(
+  formId: string,
+  userId: string,
+  res: Response,
+) {
+  const form = await Form.findOne({ formId, userId });
+  if (!form) {
+    throw new BadRequestError("Form not found");
+  }
+  const cursor = FormSubmission.find({ formId })
+    .sort({ createdAt: -1 })
+    .cursor();
+
+  res.setHeader("Content-Type", "text/csv");
+  res.setHeader(
+    "Content-Disposition",
+    `attachment; filename="${form.name}_submissions.csv"`,
+  );
+
+  const allFields = new Set<string>();
+  const submissions: any[] = [];
+
+  for await (const submission of cursor) {
+    const responseObj = Object.fromEntries(submission.response);
+    Object.keys(responseObj).forEach((field) => allFields.add(field));
+
+    submissions.push({
+      id: submission._id.toString(),
+      createdAt: submission.createdAt,
+      ...responseObj,
+    });
+  }
+
+  const fieldsList = ["id", "createdAt", ...Array.from(allFields)];
+
+  const transformStream = new Transform({
+    objectMode: true,
+    transform: (chunk, encoding, callback) => {
+      callback(null, chunk);
+    },
+  });
+
+  const csvStream = format({ headers: fieldsList });
+
+  transformStream.pipe(csvStream).pipe(res);
+
+  submissions.forEach((submission) => {
+    const row: any = {
+      id: submission.id,
+      createdAt: submission.createdAt,
+    };
+
+    Array.from(allFields).forEach((field) => {
+      row[field] = submission[field] || "";
+    });
+
+    transformStream.write(row);
+  });
+
+  transformStream.end();
+}
+
 export {
   createFormSubmissionController,
   getFormSubmissionsController,
   deleteFormSubmissionController,
+  downloadFormSubmissionsCSVController,
 };

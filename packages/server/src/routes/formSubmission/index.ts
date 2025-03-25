@@ -5,6 +5,7 @@ import {
   createFormSubmissionController,
   deleteFormSubmissionController,
   getFormSubmissionsController,
+  downloadFormSubmissionsCSVController,
 } from "../../controller/formSubmission";
 import authMiddleware from "../../middlewares/authMiddleware";
 import rateLimit from "express-rate-limit";
@@ -70,6 +71,17 @@ router.delete("/delete/:formId", authMiddleware, async (req, res, next) => {
       userId,
     });
     return AppResponse(res, status, message);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/download-csv/:formId", authMiddleware, async (req, res, next) => {
+  try {
+    const formId = req.params.formId;
+    const userId = req.headers["userId"] as string;
+
+    await downloadFormSubmissionsCSVController(formId, userId, res);
   } catch (error) {
     next(error);
   }
