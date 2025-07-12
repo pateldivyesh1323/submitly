@@ -1,24 +1,26 @@
 import React, { useState } from "react";
-import {
-  Button,
-  Checkbox,
-  DataList,
-  Flex,
-  Select,
-  Spinner,
-  Text,
-} from "@radix-ui/themes";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   DELETE_FORM_SUBMISSIONS,
   GET_FORM_SUBMISSIONS,
 } from "../../lib/constants";
-import { deleteFormSubmissions, getFormSubmissions } from "../../queries/form";
+import {
+  deleteFormSubmissions,
+  getFormSubmissions,
+  downloadFormSubmissionsCSV,
+} from "../../queries/form";
 import { toast } from "sonner";
 import { FormSubmissionsType, FormSubmissionType } from "../../types/Form";
 import { queryClient } from "../../lib/apiClient";
-import { Search, RefreshCcw, Trash2, Eye } from "lucide-react";
+import {
+  Search,
+  RefreshCcw,
+  Trash2,
+  Eye,
+  Loader2,
+  Download,
+} from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -26,6 +28,16 @@ import {
   DialogTitle,
   DialogDescription,
 } from "../ui/dialog";
+import { Button } from "../ui/button";
+import { Checkbox } from "../ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 export default function Submissions() {
   const navigate = useNavigate();
@@ -132,13 +144,13 @@ export default function Submissions() {
     });
   };
 
-  const handleSelectAll = () => {
-    if (selectedSubmissions.length === formSubmissions.length) {
-      setSelectedSubmissions([]);
-    } else {
+  const handleSelectAll = (checked: boolean | "indeterminate") => {
+    if (checked) {
       setSelectedSubmissions(
         formSubmissions.map((submission) => submission._id),
       );
+    } else {
+      setSelectedSubmissions([]);
     }
   };
 
@@ -161,18 +173,16 @@ export default function Submissions() {
   const totalPages = formSubmissionsData?.data?.totalPages || 1;
 
   return (
-    <Flex gap="6" direction="column">
-      <Flex justify="between">
-        <Flex gap="5" justify="between" align="center">
+    <div className="flex flex-col gap-6">
+      <div className="flex justify-between items-center">
+        <div className="flex gap-5 justify-between items-center">
           <Checkbox
             checked={
               selectedSubmissions.length === formSubmissions.length &&
               formSubmissions.length > 0
             }
-            data-bs-toggle="tooltip"
-            data-bs-placement="top"
-            title="Select all"
             onCheckedChange={handleSelectAll}
+            aria-label="Select all"
           />
           <form
             onSubmit={handleSearchSubmit}
@@ -180,7 +190,7 @@ export default function Submissions() {
           >
             <input
               type="text"
-              className="text-sm w-[200px] focus:w-[400px] transition-all outline-hidden pl-1 bg-transparent"
+              className="text-sm w-[200px] focus:w-[400px] transition-all bg-transparent outline-none pl-1"
               placeholder="Search in submissions"
               onChange={handleSearchChange}
               value={keyword}
@@ -188,8 +198,6 @@ export default function Submissions() {
             <button
               type="submit"
               className="bg-transparent border-none p-0"
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
               title="Search"
             >
               <Search size={17} />
@@ -198,10 +206,7 @@ export default function Submissions() {
           <Button
             type="button"
             variant="ghost"
-            color="gray"
             className="cursor-pointer"
-            data-bs-toggle="tooltip"
-            data-bs-placement="top"
             title="Refresh"
             onClick={handleReload}
           >
@@ -212,8 +217,6 @@ export default function Submissions() {
               type="button"
               variant="ghost"
               className="cursor-pointer"
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
               title="Delete Selected Submissions"
               onClick={handleDeleteSelectedSubmissions}
               disabled={isPending}
@@ -221,96 +224,104 @@ export default function Submissions() {
               <Trash2 color="red" size={17} />
             </Button>
           )}
-        </Flex>
-        <Flex align="center" gap="2">
-          <Text size="2">Sort by:</Text>
-          <Select.Root defaultValue={sortBy} onValueChange={handleChangeSort}>
-            <Select.Trigger />
-            <Select.Content>
-              <Select.Group>
-                <Select.Item value="latest">Latest</Select.Item>
-                <Select.Item value="oldest">Oldest</Select.Item>
-              </Select.Group>
-            </Select.Content>
-          </Select.Root>
-        </Flex>
-      </Flex>
+        </div>
+        <div className="flex items-center gap-2">
+          <p className="text-sm">Sort by:</p>
+          <Select defaultValue={sortBy} onValueChange={handleChangeSort}>
+            <SelectTrigger className="w-[120px]">
+              <SelectValue placeholder="Select sort" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="latest">Latest</SelectItem>
+                <SelectItem value="oldest">Oldest</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
       {formSubmissionsLoading || isPending ? (
-        <Spinner />
+        <div className="flex justify-center">
+          <Loader2 className="animate-spin" />
+        </div>
       ) : isError ? (
-        <Text>Error loading submissions.</Text>
+        <p>Error loading submissions.</p>
       ) : formSubmissions.length === 0 ? (
-        <Flex justify="center" align="center" gap="3">
+        <div className="flex justify-center items-center gap-3">
           <Search height="20px" width="20px" className="stroke-neutral-400" />
-          <Text className="font-extralight text-neutral-400">
-            No Results found!
-          </Text>
-        </Flex>
+          <p className="font-extralight text-neutral-400">No Results found!</p>
+        </div>
       ) : (
         <>
-          {formSubmissions.map((data: FormSubmissionType) => (
-            <DataList.Root className="w-full" key={data._id}>
-              <Flex align="center" className="mr-4">
-                <Checkbox
-                  checked={selectedSubmissions.includes(data._id)}
-                  onCheckedChange={() => handleCheckboxChange(data._id)}
-                  data-bs-toggle="tooltip"
-                  data-bs-placement="top"
-                  title="Select"
-                />
-              </Flex>
-              <Flex className="flex-col gap-2 flex-1">
-                {getPreviewFields(data.response).map(([key, value]) => (
-                  <DataList.Item key={key} className="flex">
-                    <DataList.Label minWidth="88px" className="capitalize">
-                      {key}
-                    </DataList.Label>
-                    <DataList.Value>{value as string}</DataList.Value>
-                  </DataList.Item>
-                ))}
-                {Object.keys(data.response).length > 2 && (
-                  <Text size="1" className="text-neutral-500">
-                    +{Object.keys(data.response).length - 2} more fields
-                  </Text>
-                )}
-              </Flex>
-              <Flex align="center" className="ml-4">
-                <Button
-                  variant="ghost"
-                  size="1"
-                  className="cursor-pointer"
-                  onClick={() => handleViewSubmission(data)}
-                  data-bs-toggle="tooltip"
-                  data-bs-placement="top"
-                  title="View full submission"
-                >
-                  <Eye size={16} />
-                </Button>
-              </Flex>
-              <DataList.Item className="bg-neutral-600 h-[0.1px]" />
-            </DataList.Root>
-          ))}
-          <Flex justify="between" className="w-full">
+          <div className="flex justify-end">
             <Button
-              color="blue"
-              className="cursor-pointer"
+              variant="outline"
+              onClick={() => downloadFormSubmissionsCSV(params.id || "")}
+              className="flex items-center gap-2"
+            >
+              <Download className="w-3.5 h-3.5" />
+              Download CSV
+            </Button>
+          </div>
+          <div className="border rounded-md">
+            {formSubmissions.map((data: FormSubmissionType, index: number) => (
+              <div
+                className={`flex items-center p-4 ${index < formSubmissions.length - 1 ? "border-b" : ""}`}
+                key={data._id}
+              >
+                <div className="mr-4">
+                  <Checkbox
+                    checked={selectedSubmissions.includes(data._id)}
+                    onCheckedChange={() => handleCheckboxChange(data._id)}
+                    aria-label="Select submission"
+                  />
+                </div>
+                <div className="flex-col gap-2 flex-1">
+                  {getPreviewFields(data.response).map(([key, value]) => (
+                    <div key={key} className="flex text-sm">
+                      <p className="w-24 capitalize font-medium">{key}</p>
+                      <p>{value as string}</p>
+                    </div>
+                  ))}
+                  {Object.keys(data.response).length > 2 && (
+                    <p className="text-xs text-neutral-500">
+                      +{Object.keys(data.response).length - 2} more fields
+                    </p>
+                  )}
+                </div>
+                <div className="ml-4">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="cursor-pointer"
+                    onClick={() => handleViewSubmission(data)}
+                    title="View full submission"
+                  >
+                    <Eye size={16} />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-between items-center w-full">
+            <Button
+              variant="outline"
               disabled={currentPage === "1"}
               onClick={handleVisitPreviousPage}
             >
               Previous
             </Button>
-            <Text color="gray" size="1">
+            <p className="text-sm text-gray-500">
               Page {currentPage} of {totalPages}
-            </Text>
+            </p>
             <Button
-              color="blue"
-              className="cursor-pointer"
+              variant="outline"
               disabled={currentPage === totalPages.toString()}
               onClick={handleVisitNextPage}
             >
               Next
             </Button>
-          </Flex>
+          </div>
         </>
       )}
 
@@ -350,6 +361,6 @@ export default function Submissions() {
           )}
         </DialogContent>
       </Dialog>
-    </Flex>
+    </div>
   );
 }

@@ -58,7 +58,7 @@ export default function Signup() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="w-[360px] border border-neutral-700 bg-darkSecondaryCust p-6 rounded-lg space-y-4 shadow-md"
+          className="w-[360px] border border-neutral-700 bg-dark-secondary-cust p-6 rounded-lg space-y-4 shadow-md"
         >
           <FormField
             control={form.control}

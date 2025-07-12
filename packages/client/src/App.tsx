@@ -11,7 +11,7 @@ import Documentation from "./pages/Documentation";
 
 function App() {
   return (
-    <Box className="min-h-screen bg-darkSecondaryCust">
+    <Box className="min-h-screen bg-dark-secondary-cust">
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />

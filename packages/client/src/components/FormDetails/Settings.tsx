@@ -1,20 +1,9 @@
-import * as Dialog from "@radix-ui/react-dialog";
 import {
   CopyIcon,
-  Cross2Icon,
   PlusCircledIcon,
   Pencil1Icon,
   TrashIcon,
 } from "@radix-ui/react-icons";
-import {
-  Code,
-  Flex,
-  IconButton,
-  Skeleton,
-  Switch,
-  Text,
-} from "@radix-ui/themes";
-import { Button } from "@/components/ui/button";
 import {
   DELETE_FORM,
   DELETE_WEBHOOK,
@@ -46,6 +35,19 @@ import { Badge } from "@/components/ui/badge";
 import { deleteWebhook } from "@/queries/webhook";
 import { updateFormEmail } from "@/queries/formEmail";
 import AddEmailDialog from "./FormEmail/AddEmailDialog";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Switch } from "@/components/ui/switch";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 export default function Settings() {
   const params = useParams();
@@ -86,20 +88,21 @@ export default function Settings() {
     },
   });
 
-  const { mutate: toggleFormActivationMutation } = useMutation({
-    mutationKey: [TOGGLE_FORM_ACTIVATION, params.id],
-    mutationFn: () => toggleFormActivation(params.id || ""),
-    onSuccess: (data) => {
-      toast.success(data?.message || "Updated successfully");
-      queryClient.invalidateQueries({
-        queryKey: [GET_FORM_INFO, params.id],
-        exact: true,
-      });
-    },
-    onError: (error) => {
-      toast.error(getErrorMessage(error));
-    },
-  });
+  const { mutate: toggleFormActivationMutation, isPending: isTogglePending } =
+    useMutation({
+      mutationKey: [TOGGLE_FORM_ACTIVATION, params.id],
+      mutationFn: () => toggleFormActivation(params.id || ""),
+      onSuccess: (data) => {
+        toast.success(data?.message || "Updated successfully");
+        queryClient.invalidateQueries({
+          queryKey: [GET_FORM_INFO, params.id],
+          exact: true,
+        });
+      },
+      onError: (error) => {
+        toast.error(getErrorMessage(error));
+      },
+    });
 
   const { mutate: deleteWebhookMutation } = useMutation({
     mutationKey: [DELETE_WEBHOOK, params.id],
@@ -168,96 +171,74 @@ export default function Settings() {
   const webhooks: WebhookType[] = formInfoData?.data?.webhook || [];
 
   return (
-    <Flex direction="column" gap="6" className="w-full max-w-3xl mx-auto p-6">
-      <Flex
-        direction="column"
-        gap="3"
-        className="p-4 border border-neutral-800 rounded-sm shadow-xs bg-neutral-900"
-      >
-        <Text
-          size="2"
-          weight="bold"
-          className="text-neutral-200 mb-2 flex items-center gap-2"
-        >
+    <div className="w-full max-w-3xl mx-auto p-6 flex flex-col gap-6">
+      <div className="p-4 border border-neutral-800 rounded-sm shadow-xs bg-neutral-900 flex flex-col gap-3">
+        <p className="text-sm font-bold text-neutral-200 mb-2 flex items-center gap-2">
           <SettingsIcon className="w-4 h-4" />
           General Settings
-        </Text>
-        <Flex direction="row" align="center" justify="between">
-          <Text size="2" weight="bold" className="text-neutral-200">
-            Form ID
-          </Text>
-          <Flex align="center" gap="2">
-            <Code variant="ghost" className="text-neutral-200">
+        </p>
+        <div className="flex flex-row items-center justify-between">
+          <p className="text-sm font-bold text-neutral-200">Form ID</p>
+          <div className="flex items-center gap-2">
+            <code className="text-neutral-200 bg-neutral-700 p-1 rounded-md text-xs">
               {params.id}
-            </Code>
-            <IconButton
-              size="1"
+            </code>
+            <Button
+              size="icon"
               aria-label="Copy Form ID"
-              color="gray"
               variant="ghost"
               onClick={handleFormIdCopy}
+              className="h-6 w-6"
             >
-              <CopyIcon />
-            </IconButton>
-          </Flex>
-        </Flex>
+              <CopyIcon className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
 
-        <Flex direction="row" align="center" justify="between">
-          <Text size="2" weight="bold" className="text-neutral-200">
-            Form Name
-          </Text>
-          <Text className="text-neutral-200">
+        <div className="flex flex-row items-center justify-between">
+          <p className="text-sm font-bold text-neutral-200">Form Name</p>
+          <p className="text-neutral-200 text-sm">
             {formInfoLoading ? (
-              <Skeleton width="120px">Loading...</Skeleton>
+              <Skeleton className="h-4 w-[120px]" />
             ) : (
               formInfoData.data.name
             )}
-          </Text>
-        </Flex>
+          </p>
+        </div>
 
-        <Flex direction="row" align="center" justify="between">
-          <Text size="2" weight="bold" className="text-neutral-200">
-            Created At
-          </Text>
-          <Text className="text-neutral-200">
+        <div className="flex flex-row items-center justify-between">
+          <p className="text-sm font-bold text-neutral-200">Created At</p>
+          <p className="text-neutral-200 text-sm">
             {formInfoLoading ? (
-              <Skeleton width="140px">Loading...</Skeleton>
+              <Skeleton className="h-4 w-[140px]" />
             ) : (
               new Date(formInfoData.data.createdAt).toLocaleString()
             )}
-          </Text>
-        </Flex>
+          </p>
+        </div>
 
-        <Flex direction="row" align="center" justify="between">
-          <Text size="2" weight="bold" className="text-neutral-200">
-            Active
-          </Text>
+        <div className="flex flex-row items-center justify-between">
+          <p className="text-sm font-bold text-neutral-200">Active</p>
           {formInfoLoading ? (
-            <Skeleton width="40px">
-              <Switch defaultChecked />
-            </Skeleton>
+            <Skeleton className="h-6 w-11 rounded-full" />
           ) : (
             <Switch
-              defaultChecked={formInfoData.data.active}
-              className="cursor-pointer"
-              onClick={handleToggleMutation}
+              checked={formInfoData.data.active}
+              onCheckedChange={handleToggleMutation}
+              disabled={isTogglePending}
             />
           )}
-        </Flex>
-      </Flex>
+        </div>
+      </div>
 
       <div className="p-4 border border-neutral-800 rounded-sm shadow-xs bg-neutral-900">
-        <Text
-          size="2"
-          weight="bold"
-          className="text-neutral-200 mb-3 flex items-center gap-2"
-        >
+        <p className="text-sm font-bold text-neutral-200 mb-3 flex items-center gap-2">
           <Download className="w-4 h-4" />
           Export Data
-        </Text>
-        <Text className="text-neutral-400 mb-4">
+        </p>
+        <p className="text-neutral-400 mb-4 text-sm">
           Download all form submissions as a CSV file.
-        </Text>
+        </p>
         <Button
           variant="outline"
           onClick={() => downloadFormSubmissionsCSV(params.id || "")}
@@ -269,46 +250,40 @@ export default function Settings() {
       </div>
 
       <div className="p-4 border border-neutral-800 rounded-sm shadow-xs bg-neutral-900">
-        <Text
-          size="2"
-          weight="bold"
-          className="text-neutral-200 mb-3 flex items-center gap-2"
-        >
+        <p className="text-sm font-bold text-neutral-200 mb-3 flex items-center gap-2">
           <MailIcon className="w-4 h-4" />
           Email Settings
-        </Text>
+        </p>
 
         {emails.length > 0 ? (
           emails.map((email, index) => (
-            <Flex
+            <div
               key={index}
-              align="center"
-              justify="between"
-              className="border-b border-neutral-800 last:border-b-0 py-2"
+              className="flex items-center justify-between border-b border-neutral-800 last:border-b-0 py-2"
             >
-              <Code
-                variant="ghost"
-                className="text-neutral-200 flex items-center gap-2"
-              >
+              <code className="text-neutral-200 flex items-center gap-2 text-sm">
                 <div
                   className={`w-2 h-2 rounded-full ${
                     email.active ? "bg-green-500" : "bg-red-500"
                   }`}
                 />
                 {email.address}
-              </Code>
-              <Flex gap="2">
-                <IconButton
+              </code>
+              <div className="flex gap-2">
+                <Button
                   aria-label="Edit Email"
                   onClick={() => {
                     setEmailMode("edit");
                     setEmailInitialData(email);
                     setIsEmailDialogOpen(true);
                   }}
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
                 >
                   <Pencil1Icon />
-                </IconButton>
-                <IconButton
+                </Button>
+                <Button
                   aria-label="Delete Email"
                   onClick={() => {
                     const newEmails = [...emails];
@@ -316,18 +291,21 @@ export default function Settings() {
                     setEmails(newEmails);
                     handleEmailUpdate();
                   }}
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
                 >
                   <TrashIcon />
-                </IconButton>
-              </Flex>
-            </Flex>
+                </Button>
+              </div>
+            </div>
           ))
         ) : (
-          <Text className="text-neutral-200 text-sm">
+          <p className="text-neutral-200 text-sm">
             No email notifications configured.
-          </Text>
+          </p>
         )}
-        <Flex className="mt-3">
+        <div className="mt-3 flex">
           <Button
             variant="outline"
             onClick={() => {
@@ -335,70 +313,66 @@ export default function Settings() {
               setEmailInitialData(null);
               setIsEmailDialogOpen(true);
             }}
+            className="flex items-center gap-2"
           >
             <PlusCircledIcon />
             Add Email
           </Button>
-        </Flex>
+        </div>
       </div>
 
       {/* Webhooks Section */}
       <div className="p-4 border border-neutral-800 rounded-sm shadow-xs bg-neutral-900">
-        <Text
-          size="2"
-          weight="bold"
-          className="text-neutral-200 mb-3 flex items-center gap-2"
-        >
+        <p className="text-sm font-bold text-neutral-200 mb-3 flex items-center gap-2">
           <LinkIcon className="w-4 h-4" />
           Webhook Settings
-        </Text>
+        </p>
 
         {webhooks.length > 0 ? (
           webhooks.map((wh) => (
-            <Flex
+            <div
               key={wh._id}
-              align="center"
-              justify="between"
-              className="border-b border-neutral-800 last:border-b-0 py-2"
+              className="flex items-center justify-between border-b border-neutral-800 last:border-b-0 py-2"
             >
-              <Code
-                variant="ghost"
-                className="text-neutral-200 flex items-center gap-2"
-              >
+              <code className="text-neutral-200 flex items-center gap-2 text-sm">
                 <div
                   className={`w-2 h-2 rounded-full ${
                     wh.active ? "bg-green-500" : "bg-red-500"
                   }`}
                 />
                 {wh.title} - {wh.url} <Badge>{wh.method}</Badge>
-              </Code>
-              <Flex gap="2">
-                <IconButton
+              </code>
+              <div className="flex gap-2">
+                <Button
                   aria-label="Edit Webhook"
                   onClick={() => {
                     setWebhookMode("edit");
                     setWebhookInitialData(wh);
                     setIsWebhookDrawerOpen(true);
                   }}
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
                 >
                   <Pencil1Icon />
-                </IconButton>
+                </Button>
 
-                <IconButton
+                <Button
                   aria-label="Delete Webhook"
                   onClick={() => handleDeleteWebhook(wh._id)}
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
                 >
                   <TrashIcon />
-                </IconButton>
-              </Flex>
-            </Flex>
+                </Button>
+              </div>
+            </div>
           ))
         ) : (
-          <Text className="text-neutral-200 text-sm">
-            No webhooks configured.
-          </Text>
+          <p className="text-neutral-200 text-sm">No webhooks configured.</p>
         )}
-        <Flex className="mt-3">
+        <div className="mt-3 flex">
           <Button
             variant="outline"
             onClick={() => {
@@ -406,66 +380,54 @@ export default function Settings() {
               setWebhookInitialData(null);
               setIsWebhookDrawerOpen(true);
             }}
+            className="flex items-center gap-2"
           >
             <PlusCircledIcon />
             Add Webhook
           </Button>
-        </Flex>
+        </div>
       </div>
       <div className="p-4 border border-red-800 rounded-md bg-neutral-900 flex flex-col gap-2">
-        <Text size="4" weight="bold" className="text-red-400">
-          Danger Zone
-        </Text>
-        <Text className="text-neutral-400 mb-4">
+        <p className="text-lg font-bold text-red-400">Danger Zone</p>
+        <p className="text-neutral-400 mb-4 text-sm">
           Once you delete a form, there is no going back. Please be certain.
-        </Text>
-        <Dialog.Root open={isFormOpen} onOpenChange={setIsFormOpen}>
-          <Dialog.Trigger asChild>
-            <Button
-              color="red"
-              variant="destructive"
-              className="cursor-pointer w-fit"
-            >
+        </p>
+        <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+          <DialogTrigger asChild>
+            <Button variant="destructive" className="cursor-pointer w-fit">
               Delete this form
             </Button>
-          </Dialog.Trigger>
+          </DialogTrigger>
 
-          <Dialog.Portal>
-            <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-50" />
-            <Dialog.Content className="fixed top-[50%] left-[50%] w-[90vw] max-w-md transform -translate-x-1/2 -translate-y-1/2 bg-neutral-900 p-6 rounded-lg shadow-lg border border-neutral-800">
-              <Dialog.Title className="text-lg font-bold text-neutral-200">
-                Confirm Delete
-              </Dialog.Title>
-              <Dialog.Description className="mt-2 text-neutral-400">
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Confirm Delete</DialogTitle>
+              <DialogDescription>
                 Are you sure you want to delete this form? This action cannot be
                 undone.
-              </Dialog.Description>
-              <div className="mt-4 flex justify-end space-x-4">
-                <Dialog.Close asChild>
-                  <Button
-                    variant="outline"
-                    className="bg-neutral-800 hover:bg-neutral-700 transition-all duration-200"
-                  >
-                    Cancel
-                  </Button>
-                </Dialog.Close>
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="gap-2 sm:justify-end">
+              <DialogClose asChild>
                 <Button
-                  color="red"
-                  variant="destructive"
-                  onClick={handleFormDelete}
-                  className="hover:bg-red-600 transition-all duration-200"
+                  type="button"
+                  variant="secondary"
+                  className="bg-neutral-800 hover:bg-neutral-700 transition-all duration-200"
                 >
-                  Delete Form
+                  Cancel
                 </Button>
-              </div>
-              <Dialog.Close asChild>
-                <button className="absolute top-2.5 right-2.5 text-neutral-400 hover:text-neutral-300">
-                  <Cross2Icon />
-                </button>
-              </Dialog.Close>
-            </Dialog.Content>
-          </Dialog.Portal>
-        </Dialog.Root>
+              </DialogClose>
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={handleFormDelete}
+                className="hover:bg-red-600 transition-all duration-200"
+              >
+                Delete Form
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
       <AddWebhookDialog
         isOpen={isWebhookDrawerOpen}
@@ -497,6 +459,6 @@ export default function Settings() {
           setIsEmailDialogOpen(false);
         }}
       />
-    </Flex>
+    </div>
   );
 }

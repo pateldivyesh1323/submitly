@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { FORM_ANALYTICS } from "../../lib/constants";
 import { getFormAnalytics } from "../../queries/formAnalytics";
-import { Flex, Grid, Spinner } from "@radix-ui/themes";
 import { useParams } from "react-router-dom";
 import { Line } from "react-chartjs-2";
 import {
@@ -15,6 +14,7 @@ import {
 } from "chart.js";
 import { AnalyticsChartDataType } from "../../types/Form";
 import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
 
 ChartJS.register(
   LineElement,
@@ -106,59 +106,40 @@ export default function Analytics() {
   };
 
   return isLoading ? (
-    <Flex justify="center" className="w-full">
-      <Spinner />
-    </Flex>
+    <div className="flex justify-center w-full">
+      <Loader2 className="animate-spin" />
+    </div>
   ) : (
     <div>
-      <Grid className="my-8" columns="2" gap="4">
-        <Flex
-          direction="column"
-          align="center"
-          className="bg-neutral-800 p-4 rounded-md"
-        >
+      <div className="my-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="flex flex-col items-center bg-neutral-800 p-4 rounded-md">
           <div className="text-5xl font-semibold">
             {formAnalyticsData.totalSubmissionCount}
           </div>
           <div className="text-neutral-300 text-sm">Total submissions</div>
-        </Flex>
-        <Flex
-          direction="column"
-          align="center"
-          className="bg-neutral-800 p-4 rounded-md"
-        >
+        </div>
+        <div className="flex flex-col items-center bg-neutral-800 p-4 rounded-md">
           <div className="text-5xl font-semibold">
             {formAnalyticsData.timeSubmissionCount}
           </div>
           <div className="text-neutral-300 text-sm">Past 30 days</div>
-        </Flex>
-        <Flex
-          direction="column"
-          align="center"
-          className="bg-neutral-800 p-4 rounded-md"
-        >
+        </div>
+        <div className="flex flex-col items-center bg-neutral-800 p-4 rounded-md">
           <div className="text-5xl font-semibold">
             {formAnalyticsData.pastMonthAverage.toPrecision(1)}
           </div>
           <div className="text-neutral-300 text-sm">Past 30 days average</div>
-        </Flex>
-        <Flex
-          direction="column"
-          align="center"
-          className="bg-neutral-800 p-4 rounded-md"
-        >
+        </div>
+        <div className="flex flex-col items-center bg-neutral-800 p-4 rounded-md">
           <div className="text-5xl font-semibold">
             {formAnalyticsData.pastYearAverage.toPrecision(1)}
           </div>
           <div className="text-neutral-300 text-sm">Past 365 days average</div>
-        </Flex>
-      </Grid>
-      <Flex
-        justify="center"
-        className="mx-auto border border-neutral-700 text-black lg:p-8 rounded-sm max-h-[600px]"
-      >
+        </div>
+      </div>
+      <div className="flex justify-center mx-auto border border-neutral-700 text-black lg:p-8 rounded-sm max-h-[600px]">
         <Line data={calcChartData} options={options} />
-      </Flex>
+      </div>
     </div>
   );
 }

@@ -2,7 +2,16 @@ import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
 import { tomorrowNight } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import environments from "../environments";
 import { useState } from "react";
-import { Flex, Heading, Select, Separator, Text } from "@radix-ui/themes";
+import { Separator } from "@/components/ui/separator";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const codeStyle = tomorrowNight;
 
@@ -122,50 +131,41 @@ const Documentation = () => {
   };
 
   return (
-    <Flex
-      direction="column"
-      className="gap-8 p-8 w-[80vw] mx-auto text-neutral-300"
-    >
-      <Heading className="text-center">Documentation</Heading>
+    <div className="flex flex-col gap-8 p-8 w-[80vw] mx-auto text-neutral-300">
+      <h1 className="text-3xl font-bold text-center">Documentation</h1>
       <section>
-        <Heading as="h3" className="mb-5">
-          Introduction
-        </Heading>
-        <Flex direction="column">
-          <Text>
+        <h2 className="text-2xl font-semibold mb-5">Introduction</h2>
+        <div className="flex flex-col gap-4">
+          <p>
             Welcome to the API documentation for submitting forms via HTTP POST
             requests. This guide will walk you through the process of sending
             form data to our server using different programming languages and
             cURL.
-          </Text>
-          <br />
-          <Text>
+          </p>
+          <p>
             The form submission endpoint requires specific headers for
             authentication, and you will need to replace placeholders with your
             form's unique ID and API key.
-          </Text>
-          <br />
-          <Text color="gray" size="2">
+          </p>
+          <p className="text-sm text-neutral-400">
             Note: The form submissions are currently limited to 10 requests per
             15 minutes per IP Address to decrease spam.
-          </Text>
-        </Flex>
+          </p>
+        </div>
       </section>
       <Separator className="w-full" />
       <section>
-        <Heading as="h5" className="mb-4">
-          Steps for integrating
-        </Heading>
+        <h2 className="text-2xl font-semibold mb-4">Steps for integrating</h2>
         <ol className="list-outside list-decimal flex flex-col gap-8">
           <li>
-            <Text className="font-semibold">URL:</Text>
+            <p className="font-semibold">URL:</p>
             <SyntaxHighlighter language="url" style={codeStyle}>
               {`POST "${environments.VITE_SERVER_URL}/form/submit"`}
             </SyntaxHighlighter>
           </li>
 
           <li>
-            <Text className="font-semibold">Required Headers:</Text>
+            <p className="font-semibold">Required Headers:</p>
             <p>
               When making a request, you must include the following headers:
             </p>
@@ -183,12 +183,12 @@ const Documentation = () => {
           </li>
 
           <li>
-            <Text className="font-semibold">Request Body:</Text>
+            <p className="font-semibold">Request Body:</p>
             <p>The request body should contain the form data as JSON.</p>
           </li>
 
           <li>
-            <Text className="font-semibold">Response:</Text>
+            <p className="font-semibold">Response:</p>
             <p>
               Upon successful submission, the server will respond with a success
               message and any relevant data. Ensure to handle responses and
@@ -197,7 +197,7 @@ const Documentation = () => {
           </li>
 
           <li>
-            <Text className="font-semibold">Error Handling:</Text>
+            <p className="font-semibold">Error Handling:</p>
             <p>
               If an error occurs during the request, make sure to catch it and
               log or display the appropriate message. Common errors include:
@@ -214,35 +214,35 @@ const Documentation = () => {
       </section>
 
       <section className="mb-6">
-        <Flex justify="between">
-          <Heading as="h2" size="4" className="mb-4">
-            Code Sample
-          </Heading>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold">Code Sample</h2>
 
-          <Select.Root
+          <Select
             defaultValue="curl"
             onValueChange={(value) => {
               setCodeLanguage(value);
             }}
           >
-            <Select.Trigger />
-            <Select.Content>
-              <Select.Group>
-                <Select.Label>Language</Select.Label>
-                <Select.Item value="curl">cURL</Select.Item>
-                <Select.Item value="javascript">Javascript</Select.Item>
-                <Select.Item value="python">Python</Select.Item>
-                <Select.Item value="go">GO</Select.Item>
-              </Select.Group>
-            </Select.Content>
-          </Select.Root>
-        </Flex>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select Language" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Language</SelectLabel>
+                <SelectItem value="curl">cURL</SelectItem>
+                <SelectItem value="javascript">Javascript</SelectItem>
+                <SelectItem value="python">Python</SelectItem>
+                <SelectItem value="go">GO</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
 
         <SyntaxHighlighter language={codeLanguage} style={codeStyle}>
           {getCodeSample()}
         </SyntaxHighlighter>
       </section>
-    </Flex>
+    </div>
   );
 };
 
