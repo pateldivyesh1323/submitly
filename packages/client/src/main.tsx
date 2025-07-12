@@ -9,6 +9,7 @@ import { Toaster } from "./components/ui/sonner.tsx";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/apiClient.ts";
 import { AuthProvider } from "./context/AuthContext.tsx";
+import { FormProvider } from "./context/FormContext.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -16,8 +17,10 @@ createRoot(document.getElementById("root")!).render(
       <Theme appearance="dark" accentColor="orange">
         <QueryClientProvider client={queryClient}>
           <AuthProvider>
-            <Toaster />
-            <App />
+            <FormProvider>
+              <Toaster />
+              <App />
+            </FormProvider>
           </AuthProvider>
         </QueryClientProvider>
       </Theme>

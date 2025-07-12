@@ -18,7 +18,14 @@ import { deleteFormSubmissions, getFormSubmissions } from "../../queries/form";
 import { toast } from "sonner";
 import { FormSubmissionsType, FormSubmissionType } from "../../types/Form";
 import { queryClient } from "../../lib/apiClient";
-import { Search, RefreshCcw, Trash2 } from "lucide-react";
+import { Search, RefreshCcw, Trash2, Eye } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "../ui/dialog";
 
 export default function Submissions() {
   const navigate = useNavigate();
@@ -30,6 +37,9 @@ export default function Submissions() {
   const [keyword, setKeyword] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSubmissions, setSelectedSubmissions] = useState<string[]>([]);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedSubmission, setSelectedSubmission] =
+    useState<FormSubmissionType | null>(null);
 
   const {
     data: formSubmissionsData,
@@ -136,6 +146,16 @@ export default function Submissions() {
     deleteSubmissionsMutation();
   };
 
+  const handleViewSubmission = (submission: FormSubmissionType) => {
+    setSelectedSubmission(submission);
+    setDialogOpen(true);
+  };
+
+  const getPreviewFields = (response: Record<string, string | number>) => {
+    const entries = Object.entries(response);
+    return entries.slice(0, 2);
+  };
+
   const formSubmissions: FormSubmissionsType =
     formSubmissionsData?.data?.formSubmissions || [];
   const totalPages = formSubmissionsData?.data?.totalPages || 1;
@@ -160,7 +180,7 @@ export default function Submissions() {
           >
             <input
               type="text"
-              className="rounded-md text-sm w-[200px] focus:w-[400px] transition-all outline-none pl-1"
+              className="text-sm w-[200px] focus:w-[400px] transition-all outline-none pl-1 bg-transparent"
               placeholder="Search in submissions"
               onChange={handleSearchChange}
               value={keyword}
@@ -239,8 +259,8 @@ export default function Submissions() {
                   title="Select"
                 />
               </Flex>
-              <Flex className="flex-col gap-2">
-                {Object.entries(data.response).map(([key, value]) => (
+              <Flex className="flex-col gap-2 flex-1">
+                {getPreviewFields(data.response).map(([key, value]) => (
                   <DataList.Item key={key} className="flex">
                     <DataList.Label minWidth="88px" className="capitalize">
                       {key}
@@ -248,6 +268,24 @@ export default function Submissions() {
                     <DataList.Value>{value as string}</DataList.Value>
                   </DataList.Item>
                 ))}
+                {Object.keys(data.response).length > 2 && (
+                  <Text size="1" className="text-neutral-500">
+                    +{Object.keys(data.response).length - 2} more fields
+                  </Text>
+                )}
+              </Flex>
+              <Flex align="center" className="ml-4">
+                <Button
+                  variant="ghost"
+                  size="1"
+                  className="cursor-pointer"
+                  onClick={() => handleViewSubmission(data)}
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  title="View full submission"
+                >
+                  <Eye size={16} />
+                </Button>
               </Flex>
               <DataList.Item className="bg-neutral-600 h-[0.1px]" />
             </DataList.Root>
@@ -275,6 +313,43 @@ export default function Submissions() {
           </Flex>
         </>
       )}
+
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Submission Details</DialogTitle>
+            <DialogDescription>
+              Complete submission information
+            </DialogDescription>
+          </DialogHeader>
+          {selectedSubmission && (
+            <div className="space-y-4">
+              <div className="grid gap-3">
+                {Object.entries(selectedSubmission.response).map(
+                  ([key, value]) => (
+                    <div
+                      key={key}
+                      className="grid grid-cols-1 md:grid-cols-3 gap-2"
+                    >
+                      <div className="font-medium text-sm text-neutral-600 dark:text-neutral-400 capitalize">
+                        {key}:
+                      </div>
+                      <div className="md:col-span-2 text-sm break-words">
+                        {value as string}
+                      </div>
+                    </div>
+                  ),
+                )}
+              </div>
+              <div className="pt-4 border-t">
+                <div className="text-xs text-neutral-500">
+                  Submission ID: {selectedSubmission._id}
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </Flex>
   );
 }
