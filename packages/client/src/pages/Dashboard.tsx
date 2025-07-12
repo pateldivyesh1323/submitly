@@ -40,9 +40,9 @@ export default function Dashboard() {
         <div className="w-full">
           <Flex
             align="center"
-            className="border border-blue-600/80 bg-blue-50/10 p-4 rounded-xl w-full overflow-hidden shadow-sm transition-all hover:border-blue-500"
+            className="border border-blue-600/80 bg-blue-50/10 p-4 rounded-xl w-full overflow-hidden shadow-xs transition-all hover:border-blue-500"
           >
-            <div className="flex-grow overflow-hidden">
+            <div className="grow overflow-hidden">
               {isLoading ? (
                 <Skeleton className="w-20">Loading...</Skeleton>
               ) : (

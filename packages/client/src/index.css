@@ -1,10 +1,22 @@
 @import url("https://fonts.googleapis.com/css2?family=Protest+Guerrilla&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Doto:wght@100..900&display=swap");
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-lime-cust: #b2ff45;
+  --color-dark-primary-cust: #111111;
+  --color-dark-secondary-cust: #141414;
+
+  --font-guerrilla: "Protest Guerrilla", "sans-serif";
+  --font-doto: "Doto", "sans-serif";
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+}
+
 @layer base {
   :root {
-    --radius: 0.5rem
+    --radius: 0.5rem;
   }
 }

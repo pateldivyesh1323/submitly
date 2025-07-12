@@ -18,7 +18,7 @@ export default function Home() {
       <Flex
         align="center"
         justify="center"
-        className="relative min-h-[100vh] mx-auto w-full bg-gradient-to-t from-neutral-800 to-transparent"
+        className="relative min-h-screen mx-auto w-full bg-linear-to-t from-neutral-800 to-transparent"
       >
         <img
           src="/assets/images/hero-bg.jpg"
@@ -57,7 +57,7 @@ export default function Home() {
       <Flex>
         <DeviceFrameset device="iPhone X" zoom={0.7}>
           <Flex
-            className="h-full w-full bg-gradient-to-r from-orange-400 to-orange-700"
+            className="h-full w-full bg-linear-to-r from-orange-400 to-orange-700"
             align="center"
             justify="center"
           >
@@ -74,7 +74,7 @@ export default function Home() {
                   Name
                 </label>
                 <input
-                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300 bg-white text-neutral-900"
+                  className="w-full px-3 py-2 border rounded-sm focus:outline-hidden focus:ring-3 focus:border-blue-300 bg-white text-neutral-900"
                   type="text"
                   id="name"
                   placeholder="Your name"
@@ -89,7 +89,7 @@ export default function Home() {
                   Email
                 </label>
                 <input
-                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300 bg-white text-neutral-900"
+                  className="w-full px-3 py-2 border rounded-sm focus:outline-hidden focus:ring-3 focus:border-blue-300 bg-white text-neutral-900"
                   type="email"
                   id="email"
                   placeholder="Your email"
@@ -104,7 +104,7 @@ export default function Home() {
                   Message
                 </label>
                 <textarea
-                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300 bg-white text-neutral-900"
+                  className="w-full px-3 py-2 border rounded-sm focus:outline-hidden focus:ring-3 focus:border-blue-300 bg-white text-neutral-900"
                   id="message"
                   rows={4}
                   placeholder="Your message"
@@ -112,7 +112,7 @@ export default function Home() {
                 ></textarea>
               </div>
               <button
-                className="w-full bg-neutral-800 text-white py-2 rounded-md hover:bg-neutral-600 focus:outline-none transition-all"
+                className="w-full bg-neutral-800 text-white py-2 rounded-sm hover:bg-neutral-600 focus:outline-hidden transition-all"
                 type="submit"
               >
                 Submit

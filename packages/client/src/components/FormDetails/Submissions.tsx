@@ -180,7 +180,7 @@ export default function Submissions() {
           >
             <input
               type="text"
-              className="text-sm w-[200px] focus:w-[400px] transition-all outline-none pl-1 bg-transparent"
+              className="text-sm w-[200px] focus:w-[400px] transition-all outline-hidden pl-1 bg-transparent"
               placeholder="Search in submissions"
               onChange={handleSearchChange}
               value={keyword}

@@ -153,7 +153,7 @@ export default function AddWebhookDialog({
               <Form.Control asChild>
                 <input
                   type="text"
-                  className="mt-1.5 w-full rounded-md bg-neutral-800 p-2.5 text-sm text-neutral-200 border border-neutral-700 focus:border-neutral-600 focus:outline-none"
+                  className="mt-1.5 w-full rounded-sm bg-neutral-800 p-2.5 text-sm text-neutral-200 border border-neutral-700 focus:border-neutral-600 focus:outline-hidden"
                   placeholder="Enter webhook title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
@@ -169,7 +169,7 @@ export default function AddWebhookDialog({
               <Form.Control asChild>
                 <input
                   type="url"
-                  className="mt-1.5 w-full rounded-md bg-neutral-800 p-2.5 text-sm text-neutral-200 border border-neutral-700 focus:border-neutral-600 focus:outline-none"
+                  className="mt-1.5 w-full rounded-sm bg-neutral-800 p-2.5 text-sm text-neutral-200 border border-neutral-700 focus:border-neutral-600 focus:outline-hidden"
                   placeholder="Enter webhook URL"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
@@ -184,7 +184,7 @@ export default function AddWebhookDialog({
               </Form.Label>
               <Form.Control asChild>
                 <select
-                  className="mt-1.5 w-full rounded-md bg-neutral-800 p-2.5 text-sm text-neutral-200 border border-neutral-700 focus:border-neutral-600 focus:outline-none"
+                  className="mt-1.5 w-full rounded-sm bg-neutral-800 p-2.5 text-sm text-neutral-200 border border-neutral-700 focus:border-neutral-600 focus:outline-hidden"
                   onChange={(e) => setMethod(e.target.value as "GET" | "POST")}
                   defaultValue={method}
                 >
@@ -200,7 +200,7 @@ export default function AddWebhookDialog({
               </Form.Label>
               <Form.Control asChild>
                 <select
-                  className="mt-1.5 w-full rounded-md bg-neutral-800 p-2.5 text-sm text-neutral-200 border border-neutral-700 focus:border-neutral-600 focus:outline-none"
+                  className="mt-1.5 w-full rounded-sm bg-neutral-800 p-2.5 text-sm text-neutral-200 border border-neutral-700 focus:border-neutral-600 focus:outline-hidden"
                   onChange={(e) =>
                     setType(e.target.value as "form.submission.created")
                   }
@@ -221,7 +221,7 @@ export default function AddWebhookDialog({
               <Form.Control asChild>
                 <input
                   type="text"
-                  className="mt-1.5 w-full rounded-md bg-neutral-800 p-2.5 text-sm text-neutral-200 border border-neutral-700 focus:border-neutral-600 focus:outline-none"
+                  className="mt-1.5 w-full rounded-sm bg-neutral-800 p-2.5 text-sm text-neutral-200 border border-neutral-700 focus:border-neutral-600 focus:outline-hidden"
                   placeholder="Enter webhook secret"
                   value={secret}
                   onChange={(e) => setSecret(e.target.value)}

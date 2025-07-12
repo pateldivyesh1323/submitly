@@ -155,7 +155,7 @@ export default function Analytics() {
       </Grid>
       <Flex
         justify="center"
-        className="mx-auto border border-neutral-700 text-black lg:p-8 rounded max-h-[600px]"
+        className="mx-auto border border-neutral-700 text-black lg:p-8 rounded-sm max-h-[600px]"
       >
         <Line data={calcChartData} options={options} />
       </Flex>

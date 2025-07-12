@@ -172,7 +172,7 @@ export default function Settings() {
       <Flex
         direction="column"
         gap="3"
-        className="p-4 border border-neutral-800 rounded-md shadow-sm bg-neutral-900"
+        className="p-4 border border-neutral-800 rounded-sm shadow-xs bg-neutral-900"
       >
         <Text
           size="2"
@@ -246,7 +246,7 @@ export default function Settings() {
         </Flex>
       </Flex>
 
-      <div className="p-4 border border-neutral-800 rounded-md shadow-sm bg-neutral-900">
+      <div className="p-4 border border-neutral-800 rounded-sm shadow-xs bg-neutral-900">
         <Text
           size="2"
           weight="bold"
@@ -268,7 +268,7 @@ export default function Settings() {
         </Button>
       </div>
 
-      <div className="p-4 border border-neutral-800 rounded-md shadow-sm bg-neutral-900">
+      <div className="p-4 border border-neutral-800 rounded-sm shadow-xs bg-neutral-900">
         <Text
           size="2"
           weight="bold"
@@ -343,7 +343,7 @@ export default function Settings() {
       </div>
 
       {/* Webhooks Section */}
-      <div className="p-4 border border-neutral-800 rounded-md shadow-sm bg-neutral-900">
+      <div className="p-4 border border-neutral-800 rounded-sm shadow-xs bg-neutral-900">
         <Text
           size="2"
           weight="bold"

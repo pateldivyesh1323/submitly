@@ -71,7 +71,7 @@ export default function AddEmailDialog({
               <Form.Control asChild>
                 <input
                   type="email"
-                  className="mt-1.5 w-full rounded-md bg-neutral-800 p-2.5 text-sm text-neutral-200 border border-neutral-700 focus:border-neutral-600 focus:outline-none"
+                  className="mt-1.5 w-full rounded-sm bg-neutral-800 p-2.5 text-sm text-neutral-200 border border-neutral-700 focus:border-neutral-600 focus:outline-hidden"
                   placeholder="Enter email address"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
