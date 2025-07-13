@@ -1,18 +1,8 @@
 import React, { useState } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  DELETE_FORM_SUBMISSIONS,
-  GET_FORM_SUBMISSIONS,
-} from "../../lib/constants";
-import {
-  deleteFormSubmissions,
-  getFormSubmissions,
-  downloadFormSubmissionsCSV,
-} from "../../queries/form";
+import { downloadFormSubmissionsCSV } from "../../queries/form";
 import { toast } from "sonner";
-import { FormSubmissionsType, FormSubmissionType } from "../../types/Form";
-import { queryClient } from "../../lib/apiClient";
+import { FormSubmissionType } from "../../types/Form";
 import { Search, RefreshCcw, Trash2, Loader2, Download } from "lucide-react";
 import {
   Dialog,
@@ -32,6 +22,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Badge } from "../ui/badge";
+import { useForm } from "../../context/FormContext";
 
 export default function Submissions() {
   const navigate = useNavigate();
@@ -41,55 +32,28 @@ export default function Submissions() {
   const currentPage = query.get("page") || "1";
 
   const [keyword, setKeyword] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedSubmissions, setSelectedSubmissions] = useState<string[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedSubmission, setSelectedSubmission] =
-    useState<FormSubmissionType | null>(null);
 
   const {
-    data: formSubmissionsData,
-    isLoading: formSubmissionsLoading,
+    selectedSubmission,
+    setSelectedSubmission,
+    selectedSubmissions,
+    formSubmissionsLoading,
     isError,
     refetch,
-  } = useQuery({
-    queryKey: [
-      GET_FORM_SUBMISSIONS,
-      params.id,
-      currentPage,
-      sortBy,
-      searchTerm,
-    ],
-    queryFn: () =>
-      getFormSubmissions(params.id || "", currentPage, sortBy, searchTerm),
-  });
-
-  const { mutate: deleteSubmissionsMutation, isPending } = useMutation({
-    mutationKey: [DELETE_FORM_SUBMISSIONS, params.id],
-    mutationFn: () =>
-      deleteFormSubmissions(params.id || "", selectedSubmissions),
-    onSuccess: () => {
-      toast.success("Submissions deleted successfully");
-      queryClient.invalidateQueries({
-        queryKey: [
-          GET_FORM_SUBMISSIONS,
-          params.id,
-          currentPage,
-          sortBy,
-          searchTerm,
-        ],
-      });
-      setSelectedSubmissions([]);
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
+    isPending,
+    handleCheckboxChange,
+    handleSelectAll,
+    handleDeleteSelectedSubmissions,
+    formSubmissions,
+    totalPages,
+    markSubmissionAsRead,
+  } = useForm();
 
   const handleChangeSort = (value: string) => {
     const params = new URLSearchParams(location.search);
     params.set("sort", value);
-    params.set("page", "1"); // Reset to first page on sort change
+    params.set("page", "1");
     navigate(`${location.pathname}?${params.toString()}`);
   };
 
@@ -99,9 +63,9 @@ export default function Submissions() {
 
   const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSearchTerm(keyword);
     const params = new URLSearchParams(location.search);
-    params.set("page", "1"); // Reset to first page on new search
+    params.set("search", keyword);
+    params.set("page", "1");
     navigate(`${location.pathname}?${params.toString()}`);
   };
 
@@ -128,43 +92,16 @@ export default function Submissions() {
     toast.success("Submissions reloaded");
   };
 
-  const handleCheckboxChange = (submissionId: string) => {
-    setSelectedSubmissions((prev) => {
-      if (prev.includes(submissionId)) {
-        return prev.filter((id) => id !== submissionId);
-      } else {
-        return [...prev, submissionId];
-      }
-    });
-  };
-
-  const handleSelectAll = (checked: boolean | "indeterminate") => {
-    if (checked) {
-      setSelectedSubmissions(
-        formSubmissions.map((submission) => submission._id),
-      );
-    } else {
-      setSelectedSubmissions([]);
-    }
-  };
-
-  const handleDeleteSelectedSubmissions = () => {
-    deleteSubmissionsMutation();
-  };
-
   const handleViewSubmission = (submission: FormSubmissionType) => {
     setSelectedSubmission(submission);
     setDialogOpen(true);
+    markSubmissionAsRead(submission._id);
   };
 
   const getPreviewFields = (response: Record<string, string | number>) => {
     const entries = Object.entries(response);
     return entries.slice(0, 2);
   };
-
-  const formSubmissions: FormSubmissionsType =
-    formSubmissionsData?.data?.formSubmissions || [];
-  const totalPages = formSubmissionsData?.data?.totalPages || 1;
 
   return (
     <div className="flex flex-col gap-6">
@@ -289,7 +226,7 @@ export default function Submissions() {
                   )}
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge variant={data.read ? "default" : "secondary"}>
+                  <Badge variant={data.read ? "outline" : "destructive"}>
                     {data.read ? "Read" : "Unread"}
                   </Badge>
                 </div>

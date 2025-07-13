@@ -8,7 +8,7 @@ import {
   ChartNoAxesCombined,
   Send as SendIcon,
 } from "lucide-react";
-// import { useEffect } from "react";
+import { FormProvider } from "../context/FormContext";
 
 export default function FormPage() {
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ export default function FormPage() {
   };
 
   return (
-    <>
+    <FormProvider>
       <Flex
         align="center"
         direction="column"
@@ -65,6 +65,6 @@ export default function FormPage() {
           </Box>
         </Tabs.Root>
       </Flex>
-    </>
+    </FormProvider>
   );
 }
