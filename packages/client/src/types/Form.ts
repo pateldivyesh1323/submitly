@@ -22,6 +22,7 @@ export const webhookSchema = z.object({
 export const formSubmissionSchema = z.object({
   _id: z.string(),
   response: z.record(z.string()),
+  read: z.boolean(),
 });
 
 // Derive types from schemas

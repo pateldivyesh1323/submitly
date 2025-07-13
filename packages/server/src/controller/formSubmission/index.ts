@@ -1,6 +1,9 @@
 import { sendEmail } from "../../mails";
 import formSubmissionTemplate from "../../mails/templates/formSubmissionTemplate";
-import { BadRequestError } from "../../middlewares/error-handler";
+import {
+  BadRequestError,
+  NotFoundError,
+} from "../../middlewares/error-handler";
 import Form from "../../models/Form";
 import { FormSubmission } from "../../models/FormSubmissionModel";
 import { callWebhooksController } from "../webhooks";
@@ -192,9 +195,38 @@ async function downloadFormSubmissionsCSVController(
   transformStream.end();
 }
 
+async function markAsReadController({
+  formId,
+  userId,
+  submissionId,
+}: {
+  formId: string;
+  userId: string;
+  submissionId: string;
+}) {
+  const form = await Form.findOne({ formId, userId });
+
+  if (!form) {
+    throw new BadRequestError("Form not found");
+  }
+
+  const submission = await FormSubmission.findOneAndUpdate(
+    { _id: submissionId, formId },
+    { read: true },
+    { new: true },
+  );
+
+  if (!submission) {
+    throw new NotFoundError("Submission not found");
+  }
+
+  return submission;
+}
+
 export {
   createFormSubmissionController,
   getFormSubmissionsController,
   deleteFormSubmissionController,
   downloadFormSubmissionsCSVController,
+  markAsReadController,
 };

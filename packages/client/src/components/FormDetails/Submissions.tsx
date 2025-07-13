@@ -13,14 +13,7 @@ import {
 import { toast } from "sonner";
 import { FormSubmissionsType, FormSubmissionType } from "../../types/Form";
 import { queryClient } from "../../lib/apiClient";
-import {
-  Search,
-  RefreshCcw,
-  Trash2,
-  Eye,
-  Loader2,
-  Download,
-} from "lucide-react";
+import { Search, RefreshCcw, Trash2, Loader2, Download } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -38,6 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { Badge } from "../ui/badge";
 
 export default function Submissions() {
   const navigate = useNavigate();
@@ -266,13 +260,18 @@ export default function Submissions() {
           <div className="border rounded-md">
             {formSubmissions.map((data: FormSubmissionType, index: number) => (
               <div
-                className={`flex items-center p-4 ${index < formSubmissions.length - 1 ? "border-b" : ""}`}
                 key={data._id}
+                className={`flex items-center p-4 ${index < formSubmissions.length - 1 ? "border-b" : ""} hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer`}
+                onClick={() => {
+                  handleViewSubmission(data);
+                }}
               >
                 <div className="mr-4">
                   <Checkbox
                     checked={selectedSubmissions.includes(data._id)}
-                    onCheckedChange={() => handleCheckboxChange(data._id)}
+                    onCheckedChange={() => {
+                      handleCheckboxChange(data._id);
+                    }}
                     aria-label="Select submission"
                   />
                 </div>
@@ -289,16 +288,10 @@ export default function Submissions() {
                     </p>
                   )}
                 </div>
-                <div className="ml-4">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="cursor-pointer"
-                    onClick={() => handleViewSubmission(data)}
-                    title="View full submission"
-                  >
-                    <Eye size={16} />
-                  </Button>
+                <div className="flex items-center gap-2">
+                  <Badge variant={data.read ? "default" : "secondary"}>
+                    {data.read ? "Read" : "Unread"}
+                  </Badge>
                 </div>
               </div>
             ))}

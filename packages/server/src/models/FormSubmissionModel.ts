@@ -12,6 +12,10 @@ const formSubmissionSchema = new mongoose.Schema(
       of: String,
       required: true,
     },
+    read: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

@@ -11,8 +11,14 @@ import connectDB from "./lib/db";
 import rateLimit from "express-rate-limit";
 import webhookRoute from "./routes/formWebhooks";
 import formEmailRoute from "./routes/formEmails";
+import { createServer } from "http";
+import { Server } from "socket.io";
+import setupSocketIO from "./sockets";
 
 const app = express();
+const httpServer = createServer(app);
+const io = new Server(httpServer);
+
 const PORT = environments.PORT;
 
 // Database connection
@@ -56,6 +62,9 @@ app.all("*", (req: Request, res: Response) => {
 // Error handler
 app.use(errorMiddleware);
 
-app.listen(PORT, () => {
+// Socket setup
+setupSocketIO(io);
+
+httpServer.listen(PORT, () => {
   console.log(`🚀 Server is running on port https://localhost:${PORT}`);
 });
