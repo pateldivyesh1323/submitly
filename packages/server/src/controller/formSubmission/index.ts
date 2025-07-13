@@ -10,6 +10,7 @@ import { callWebhooksController } from "../webhooks";
 import { Response } from "express";
 import { Transform } from "stream";
 import { format } from "fast-csv";
+import { formNamespace } from "../../sockets";
 
 const limit = 10;
 
@@ -44,6 +45,8 @@ async function createFormSubmissionController({ formId, data }: any) {
       html: emailHtml,
     });
   }
+
+  formNamespace.to(formId).emit("new-submission");
 
   return {
     status: 200,

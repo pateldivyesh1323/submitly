@@ -21,7 +21,7 @@ export default function setupFormNamespace(namespace: Namespace) {
       socket.leave(formId);
     });
 
-    socket.on("mark-as-read", async (formId: string, submissionId: string) => {
+    socket.on("mark-as-read", async ({ formId, submissionId }) => {
       const user = socket.data.user;
 
       const form = await Form.findOne({ formId, userId: user._id });

@@ -13,11 +13,16 @@ import webhookRoute from "./routes/formWebhooks";
 import formEmailRoute from "./routes/formEmails";
 import { createServer } from "http";
 import { Server } from "socket.io";
-import setupSocketIO from "./sockets";
+import { setupSocketIO } from "./sockets";
 
 const app = express();
 const httpServer = createServer(app);
-const io = new Server(httpServer);
+const io = new Server(httpServer, {
+  cors: {
+    origin: environments.ORIGIN_URI,
+    credentials: true,
+  },
+});
 
 const PORT = environments.PORT;
 
