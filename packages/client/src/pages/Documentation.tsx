@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import ApiTestForm from "@/components/Documentation/ApiTestForm";
 
 const codeStyle = tomorrowNight;
 
@@ -115,6 +116,7 @@ func main() {
 
 const Documentation = () => {
   const [codeLanguage, setCodeLanguage] = useState("curl");
+
   const getCodeSample = () => {
     switch (codeLanguage) {
       case "curl":
@@ -241,6 +243,13 @@ const Documentation = () => {
         <SyntaxHighlighter language={codeLanguage} style={codeStyle}>
           {getCodeSample()}
         </SyntaxHighlighter>
+      </section>
+
+      <Separator className="w-full" />
+
+      <section>
+        <h2 className="text-2xl font-bold mb-4">Test Your API</h2>
+        <ApiTestForm />
       </section>
     </div>
   );

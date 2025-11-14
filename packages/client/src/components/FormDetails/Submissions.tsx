@@ -203,7 +203,7 @@ export default function Submissions() {
                   handleViewSubmission(data);
                 }}
               >
-                <div className="mr-4">
+                <div className="mr-4" onClick={(e) => e.stopPropagation()}>
                   <Checkbox
                     checked={selectedSubmissions.includes(data._id)}
                     onCheckedChange={() => {
